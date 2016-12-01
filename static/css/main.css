@@ -10,8 +10,10 @@ vz-cube {
 :root * {
     box-sizing: inherit;
 }
-#cube-1 {
+#cube-1, #cube-2 {
     width: 400px; height: 400px;
-    outline: 2px solid tomato;
+    outline: 2px solid;
     margin: 2rem auto;
 }
+#cube-1 { outline-color: gold; }
+#cube-2 { outline-color: tomato; }
