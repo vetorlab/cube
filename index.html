@@ -4,16 +4,19 @@
         <meta charset="utf-8">
         <title>Cubefaces</title>
 
+        <link rel="stylesheet" href="static/css/cube.css">
         <link rel="stylesheet" href="static/css/main.css">
     </head>
     <body>
         <vz-cube id="cube-1">
-            <vz-cubeface side="front" src="" />
-            <vz-cubeface side="back" src="" />
-            <vz-cubeface side="up" src="" />
-            <vz-cubeface side="down" src="" />
-            <vz-cubeface side="left" src="" />
-            <vz-cubeface side="right" src="" />
+            <vz-cubepivot>
+                <img data-face="front" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="background-color: red;" />
+                <img data-face="back" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="background-color: blue;" />
+                <img data-face="left" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="background-color: purple;" />
+                <img data-face="right" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="background-color: orange;" />
+                <img data-face="top" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="background-color: green;" />
+                <img data-face="bottom" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="background-color: yellow;" />
+            </vz-cubepivot>
         </vz-cube>
         <vz-cube id="cube-2">
             <vz-cubeface side="front" src="" />
