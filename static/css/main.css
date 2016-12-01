@@ -1,0 +1,17 @@
+vz-cube {
+    display: block;
+}
+
+/* -- beautify -- */
+:root {
+    font: 16px/1.618 sans-serif;
+    box-sizing: border-box;
+}
+:root * {
+    box-sizing: inherit;
+}
+#cube-1 {
+    width: 400px; height: 400px;
+    outline: 2px solid tomato;
+    margin: 2rem auto;
+}
