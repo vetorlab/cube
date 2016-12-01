@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Cubefaces</title>
+
+        <style>
+        vz-cube {
+            display: block;
+        }
+
+        /* -- beautify -- */
+        :root {
+            font: 16px/1.618 sans-serif;
+            box-sizing: border-box;
+        }
+        :root * {
+            box-sizing: inherit;
+        }
+        #cube-1 {
+            width: 400px; height: 400px;
+            outline: 2px solid tomato;
+            margin: 2rem auto;
+        }
+        </style>
+    </head>
+    <body>
+        <vz-cube id="cube-1">
+            <vz-cubeface side="front" src="" />
+            <vz-cubeface side="back" src="" />
+            <vz-cubeface side="up" src="" />
+            <vz-cubeface side="down" src="" />
+            <vz-cubeface side="left" src="" />
+            <vz-cubeface side="right" src="" />
+        </vz-cube>
+    </body>
+
+    <script src="bower_components/webcomponentsjs/webcomponents.min.js" charset="utf-8"></script>
+    <script>
+        class VZCubeElement extends HTMLElement {
+        }
+        document.registerElement('vz-cube', VZCubeElement)
+    </script>
+</html>
