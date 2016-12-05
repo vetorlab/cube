@@ -18,12 +18,16 @@
             html, body {
                 margin: 0; padding: 0;
             }
-            @keyframes spin {
-                0%      { transform: translateZ(800px) rotateY(0deg) }
-                100%    { transform: translateZ(800px) rotateY(360deg) }
+
+            vz-cube, vz-cubepivot {
+                display: block;
             }
+
+            section {
+                border: 1rem solid gold;
+            }
+
             .cube-viewport {
-                background: tomato;
                 width: 100vmax; height: 100vmax;
                 perspective: 800px;
                 transform: translateZ(800px);
@@ -32,7 +36,6 @@
             .cube-pivot {
                 position: relative;
                 width: 100%; height: 100%;
-                animation: spin 30s infinite;
                 transform-style: preserve-3d;
                 transform: translateZ(800px);
             }
@@ -72,16 +75,18 @@
         </style>
     </head>
     <body>
-        <div class="cube-viewport">
-            <div class="cube-pivot">
-                <div class="cube-face" data-face="top" style="background-image: url(static/images/cubes/02/top.jpg)"></div>
-                <div class="cube-face" data-face="bottom" style="background-image: url(static/images/cubes/02/bottom.jpg)"></div>
-                <div class="cube-face" data-face="front" style="background-image: url(static/images/cubes/02/front.jpg)"></div>
-                <div class="cube-face" data-face="back" style="background-image: url(static/images/cubes/02/back.jpg)"></div>
-                <div class="cube-face" data-face="left" style="background-image: url(static/images/cubes/02/left.jpg)"></div>
-                <div class="cube-face" data-face="right" style="background-image: url(static/images/cubes/02/right.jpg)"></div>
-            </div>
-        </div>
+        <section>
+            <vz-cube class="cube-viewport">
+                <vz-cubepivot class="cube-pivot">
+                    <div class="cube-face" data-face="top" style="background-image: url(static/images/cubes/02/top.jpg)"></div>
+                    <div class="cube-face" data-face="bottom" style="background-image: url(static/images/cubes/02/bottom.jpg)"></div>
+                    <div class="cube-face" data-face="front" style="background-image: url(static/images/cubes/02/front.jpg)"></div>
+                    <div class="cube-face" data-face="back" style="background-image: url(static/images/cubes/02/back.jpg)"></div>
+                    <div class="cube-face" data-face="left" style="background-image: url(static/images/cubes/02/left.jpg)"></div>
+                    <div class="cube-face" data-face="right" style="background-image: url(static/images/cubes/02/right.jpg)"></div>
+                </vz-cubepivot>
+            </vz-cube>
+        </section>
 
 
         <!-- <vz-cube id="cube-1">
