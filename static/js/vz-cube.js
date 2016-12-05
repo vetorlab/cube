@@ -3,10 +3,15 @@ class VZCubeElement extends HTMLElement {
         this.initialR = { roll: 0, pitch: 0, yaw: 0 }
         this.currentR = { roll: 0, pitch: 0, yaw: 0 }
         this.initialPos = { x: 0, y: 0, t: 0 }
+        this.currentPos = { x: 0, y: 0, t: 0 }
 
         // elements
         this.pivot = this.querySelector('vz-cubepivot')
 
+        // styles
+        this.style.cursor = 'move'
+
+        // events
         this._mouseDownListener = this._mouseDownListener.bind(this)
         this._mouseUpListener = this._mouseUpListener.bind(this)
         this._mouseMoveListener = this._mouseMoveListener.bind(this)
@@ -24,6 +29,8 @@ class VZCubeElement extends HTMLElement {
     detachedCallback() {
     }
     move(x, y, t) {
+        this.currentPos = { x, y, t }
+
         if (!this.pivot) return;
 
         let perspective = parseInt(window.getComputedStyle(this).perspective)
@@ -56,7 +63,9 @@ class VZCubeElement extends HTMLElement {
         this.initialPos = { x: e.touches[0].pageX, y: e.touches[0].pageY, t: e.timeStamp }
     }
 
-    _touchEndListener(e) {}
+    _touchEndListener(e) {
+        // @TODO inertia
+    }
 
     _touchMoveListener(e) {
         e.preventDefault()
