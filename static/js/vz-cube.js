@@ -23,6 +23,14 @@ class VZCubeElement extends HTMLElement {
     }
     detachedCallback() {
     }
+    move(x, y, t) {
+        if (!this.pivot) return;
+
+        let perspective = parseInt(window.getComputedStyle(this).perspective)
+        let deltaX = (x - this.initialPos.x) * -0.2
+        let deltaY = (y - this.initialPos.y) * 0.2
+        this.pivot.style.transform = `translateZ(${perspective}px) rotateX(${deltaY}deg) rotateY(${deltaX}deg)`
+    }
 
     // ==============
     // event handlers
@@ -40,14 +48,7 @@ class VZCubeElement extends HTMLElement {
         // @TODO inertia
     }
     _mouseMoveListener(e) {
-        // @TODO cap Y rotation at 180deg
-        // @TODO map movement to viewport or cube face dimentions (but how?)å
-        let perspective = parseInt(window.getComputedStyle(this).perspective)
-        if (this.pivot) {
-            let x = (e.pageX - this.initialPos.x) * -0.2
-            let y = (e.pageY - this.initialPos.y) * 0.2
-            this.pivot.style.transform = `translateZ(${perspective}px) rotateX(${y}deg) rotateY(${x}deg)`
-        }
+        this.move(e.pageX, e.pageY, e.timeStamp)
     }
 
     // touch
@@ -59,12 +60,7 @@ class VZCubeElement extends HTMLElement {
 
     _touchMoveListener(e) {
         e.preventDefault()
-        if (!this.pivot) return;
-
-        let perspective = parseInt(window.getComputedStyle(this).perspective)
-        let x = (e.touches[0].pageX - this.initialPos.x) * -0.2
-        let y = (e.touches[0].pageY - this.initialPos.y) * 0.2
-        this.pivot.style.transform = `translateZ(${perspective}px) rotateX(${y}deg) rotateY(${x}deg)`
+        this.move(e.touches[0].pageX, e.touches[0].pageY, e.timeStamp)
     }
 
 

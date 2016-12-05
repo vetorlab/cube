@@ -14,6 +14,10 @@
             }
             html {
                 background: #333;
+                /*box-sizing: border-box;*/
+            }
+            html * {
+                /*box-sizing: inherit;*/
             }
             html, body {
                 margin: 0; padding: 0;
@@ -24,7 +28,12 @@
             }
 
             section {
-                border: 1rem solid gold;
+                /*border: 1rem solid gold;*/
+                width: 100vw; height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                overflow: hidden;
             }
 
             .cube-viewport {
