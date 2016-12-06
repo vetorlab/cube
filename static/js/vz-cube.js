@@ -1,5 +1,5 @@
 /** @see https://github.com/processing/p5.js/blob/master/src/math/calculation.js */
-function mapNumber(n, start1, stop1, start2 = 0, stop2 = 1) {
+function map(n, start1, stop1, start2 = 0, stop2 = 1) {
     return ((n - start1) / (stop1 - start1)) * (stop2 - start2) + start2
 }
 function constraint(n, min = 0, max = 1) {
@@ -17,12 +17,12 @@ class VZArray extends Array {
 
 /**
  * @TODO inertia
+ * @TODO get/set props from attrs
  */
 class VZCubeElement extends HTMLElement {
     createdCallback() {
-        this.refreshPointer = null
-        this.initialR = { roll: 0, pitch: 0, yaw: 0 }
-        this.currentR = { roll: 0, pitch: 0, yaw: 0 }
+        this.initialR = { pitch: 0, yaw: 0 }
+        this.currentR = { pitch: 0, yaw: 0 }
         this.eventStack = new VZArray()
 
         // elements
@@ -58,6 +58,7 @@ class VZCubeElement extends HTMLElement {
     }
 
     startInteraction() {
+        Object.assign(this.initialR, this.currentR)
         this.eventStack = new VZArray()
     }
 
@@ -104,17 +105,24 @@ class VZCubeElement extends HTMLElement {
         this.addInteraction({ x: e.touches[0].pageX, y: e.touches[0].pageY, t: e.timeStamp })
     }
 
-
     // =========
     // animation
     // ---------
 
     _refresh () {
         if (this.eventStack.length >= 2 && this.pivot) {
+            // calculate deltas of this interaction
+            let deltaX = (this.eventStack.last.x - this.eventStack.first.x) * -0.2 // side-to-side movement
+            let deltaY = (this.eventStack.last.y - this.eventStack.first.y) * 0.2 // up-down movement
+
+            // apply deltas to the initial R of this interaction
+            this.currentR.yaw   = this.initialR.yaw + deltaY, -90, 90 // constraint rotation arount X axis (yaw)
+            this.currentR.pitch = this.initialR.pitch + deltaX
+
+            // apply current R to the pivot element
             let perspective = parseInt(window.getComputedStyle(this).perspective)
-            let deltaX = (this.eventStack.last.x - this.eventStack.first.x) * -0.2
-            let deltaY = (this.eventStack.last.y - this.eventStack.first.y) * 0.2
-            this.pivot.style.transform = `translateZ(${perspective}px) rotateX(${deltaY}deg) rotateY(${deltaX}deg)`
+
+            this.pivot.style.transform = `translateZ(${perspective}px) rotateX(${this.currentR.yaw}deg) rotateY(${this.currentR.pitch}deg)`
         }
 
         // recurse
