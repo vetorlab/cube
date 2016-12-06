@@ -4,24 +4,19 @@
         <meta charset="utf-8">
         <title>Cubefaces</title>
 
-        <!-- <link rel="stylesheet" href="static/css/cube.css">
-        <link rel="stylesheet" href="static/css/main.css"> -->
-        <style media="screen">
-            :root {
-                --viewport-size: 100vmax;
-                --face-offset: -1000px; /* calc(1px + var(--viewport-size)); */
-                --perspective: 800px;
-            }
+        <link rel="stylesheet" href="static/css/vz-cube.css">
+        <style>
             html {
                 background: #333;
-                /*box-sizing: border-box;*/
+                box-sizing: border-box;
             }
             html * {
-                /*box-sizing: inherit;*/
+                box-sizing: inherit;
             }
             html, body {
                 margin: 0; padding: 0;
             }
+
 
             vz-cube, vz-cubepivot {
                 display: block;
@@ -37,66 +32,61 @@
             section > * {
                 flex: 0 0 auto;
             }
-            .cube-viewport {
+            vz-cube {
                 width: 100vmax; height: 100vmax;
                 perspective: 800px;
                 transform: translateZ(800px);
                 overflow: hidden;
             }
-            .cube-pivot {
+            vz-cubepivot {
                 position: relative;
                 width: 100vmax; height: 100vmax;
                 transform-style: preserve-3d;
                 transform: translateZ(800px);
             }
-            .cube-face {
+            vz-cubeface {
+                display: block;
                 position: absolute;
                 left: 0; top: 0;
                 width: 100vmax; height: 100vmax;
                 background-size: 100% 100%;
-                display: none;
                 backface-visibility: hidden;
             }
-            .cube-face[data-face=front] {
-                display: block;
-                transform: rotateY(0deg) translateZ(-49.95vmax);
-            }
-            .cube-face[data-face=left] {
-                display: block;
-                transform: rotateY(90deg) translateZ(-49.95vmax);
-            }
-            .cube-face[data-face=right] {
-                display: block;
-                transform: rotateY(-90deg) translateZ(-49.95vmax);
-            }
-            .cube-face[data-face=top] {
-                display: block;
-                transform: rotateX(-90deg) translateZ(-49.95vmax);
-            }
-            .cube-face[data-face=bottom] {
-                display: block;
-                transform: rotateX(90deg) translateZ(-49.95vmax);
-            }
-            .cube-face[data-face=back] {
-                display: block;
-                transform: rotateY(180deg) translateZ(-49.95vmax);
-            }
-
+            vz-cubeface[data-face=front]    { transform: rotateY(0deg) translateZ(-49.95vmax) }
+            vz-cubeface[data-face=left]     { transform: rotateY(90deg) translateZ(-49.95vmax) }
+            vz-cubeface[data-face=right]    { transform: rotateY(-90deg) translateZ(-49.95vmax) }
+            vz-cubeface[data-face=top]      { transform: rotateX(-90deg) translateZ(-49.95vmax) }
+            vz-cubeface[data-face=bottom]   { transform: rotateX(90deg) translateZ(-49.95vmax) }
+            vz-cubeface[data-face=back]     { transform: rotateY(180deg) translateZ(-49.95vmax) }
         </style>
     </head>
     <body>
         <section>
-            <vz-cube class="cube-viewport">
-                <vz-cubepivot class="cube-pivot">
-                    <div class="cube-face" data-face="top" style="background-image: url(static/images/cubes/02/top.jpg)"></div>
-                    <div class="cube-face" data-face="bottom" style="background-image: url(static/images/cubes/02/bottom.jpg)"></div>
-                    <div class="cube-face" data-face="front" style="background-image: url(static/images/cubes/02/front.jpg)"></div>
-                    <div class="cube-face" data-face="back" style="background-image: url(static/images/cubes/02/back.jpg)"></div>
-                    <div class="cube-face" data-face="left" style="background-image: url(static/images/cubes/02/left.jpg)"></div>
-                    <div class="cube-face" data-face="right" style="background-image: url(static/images/cubes/02/right.jpg)"></div>
+            <vz-cube>
+                <vz-cubepivot>
+                    <vz-cubeface data-face="top" style="background-image: url(static/images/cubes/01/top.jpg)"></vz-cubeface>
+                    <vz-cubeface data-face="bottom" style="background-image: url(static/images/cubes/01/bottom.jpg)"></vz-cubeface>
+                    <vz-cubeface data-face="front" style="background-image: url(static/images/cubes/01/front.jpg)"></vz-cubeface>
+                    <vz-cubeface data-face="back" style="background-image: url(static/images/cubes/01/back.jpg)"></vz-cubeface>
+                    <vz-cubeface data-face="left" style="background-image: url(static/images/cubes/01/left.jpg)"></vz-cubeface>
+                    <vz-cubeface data-face="right" style="background-image: url(static/images/cubes/01/right.jpg)"></vz-cubeface>
                 </vz-cubepivot>
             </vz-cube>
         </section>
+
+        <section>
+            <vz-cube>
+                <vz-cubepivot>
+                    <vz-cubeface data-face="top" style="background-image: url(static/images/cubes/02/top.jpg)"></vz-cubeface>
+                    <vz-cubeface data-face="bottom" style="background-image: url(static/images/cubes/02/bottom.jpg)"></vz-cubeface>
+                    <vz-cubeface data-face="front" style="background-image: url(static/images/cubes/02/front.jpg)"></vz-cubeface>
+                    <vz-cubeface data-face="back" style="background-image: url(static/images/cubes/02/back.jpg)"></vz-cubeface>
+                    <vz-cubeface data-face="left" style="background-image: url(static/images/cubes/02/left.jpg)"></vz-cubeface>
+                    <vz-cubeface data-face="right" style="background-image: url(static/images/cubes/02/right.jpg)"></vz-cubeface>
+                </vz-cubepivot>
+            </vz-cube>
+        </section>
+
 
 
         <!-- <vz-cube id="cube-1">
@@ -123,5 +113,6 @@
     </body>
 
     <script src="bower_components/webcomponentsjs/webcomponents.min.js"></script>
+
     <script src="static/js-compat/vz-cube.js"></script>
 </html>
