@@ -1,0 +1,28 @@
+vz-cube, vz-cubepivot, vz-cubeface {
+    display: block;
+}
+vz-cube {
+    width: 100vmax; height: 100vmax;
+    perspective: 800px;
+    transform: translateZ(800px);
+    overflow: hidden;
+}
+vz-cubepivot {
+    position: relative;
+    width: 100vmax; height: 100vmax;
+    transform-style: preserve-3d;
+    transform: translateZ(800px);
+}
+vz-cubeface {
+    position: absolute;
+    left: 0; top: 0;
+    width: 100vmax; height: 100vmax;
+    background-size: 100% 100%;
+    backface-visibility: hidden;
+}
+vz-cubeface[data-face=front]    { transform: rotateY(0deg) translateZ(-49.95vmax) }
+vz-cubeface[data-face=left]     { transform: rotateY(90deg) translateZ(-49.95vmax) }
+vz-cubeface[data-face=right]    { transform: rotateY(-90deg) translateZ(-49.95vmax) }
+vz-cubeface[data-face=top]      { transform: rotateX(-90deg) translateZ(-49.95vmax) }
+vz-cubeface[data-face=bottom]   { transform: rotateX(90deg) translateZ(-49.95vmax) }
+vz-cubeface[data-face=back]     { transform: rotateY(180deg) translateZ(-49.95vmax) }
