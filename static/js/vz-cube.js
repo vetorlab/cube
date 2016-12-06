@@ -1,9 +1,12 @@
+/**
+ * @TODO inertia
+ */
 class VZCubeElement extends HTMLElement {
     createdCallback() {
+        this.refreshPointer = null
         this.initialR = { roll: 0, pitch: 0, yaw: 0 }
         this.currentR = { roll: 0, pitch: 0, yaw: 0 }
-        this.initialPos = { x: 0, y: 0, t: 0 }
-        this.currentPos = { x: 0, y: 0, t: 0 }
+        this.eventStack = []
 
         // elements
         this.pivot = this.querySelector('vz-cubepivot')
@@ -18,70 +21,88 @@ class VZCubeElement extends HTMLElement {
         this._touchStartListener = this._touchStartListener.bind(this)
         this._touchEndListener = this._touchEndListener.bind(this)
         this._touchMoveListener = this._touchMoveListener.bind(this)
+        this._refresh = this._refresh.bind(this)
 
         this.addEventListener('mousedown', this._mouseDownListener)
         this.addEventListener('touchstart', this._touchStartListener, true)
         this.addEventListener('touchmove', this._touchMoveListener, true)
         this.addEventListener('touchend', this._touchEndListener, true)
+        this.addEventListener('touchcancel', this._touchEndListener, true)
     }
+
     attachedCallback() {
+        this._refresh()
     }
+
     detachedCallback() {
+        (typeof cancelAnimationFrame === 'function') ? cancelAnimationFrame(this.refreshPointer) : clearTimeout(this.refreshPointer)
     }
-    move(x, y, t) {
-        this.currentPos = { x, y, t }
 
-        if (!this.pivot) return;
+    startInteraction() {}
 
-        let perspective = parseInt(window.getComputedStyle(this).perspective)
-        let deltaX = (x - this.initialPos.x) * -0.2
-        let deltaY = (y - this.initialPos.y) * 0.2
-        this.pivot.style.transform = `translateZ(${perspective}px) rotateX(${deltaY}deg) rotateY(${deltaX}deg)`
+    addInteraction(interaction) {
+        this.eventStack.push(interaction)
     }
+
+    endInteraction() {}
+
+    // move(x, y, t) {
+    //     this.currentPos = { x, y, t }
+    //
+    //     if (!this.pivot) return;
+    //
+    //     let perspective = parseInt(window.getComputedStyle(this).perspective)
+    //     let deltaX = (x - this.initialPos.x) * -0.2
+    //     let deltaY = (y - this.initialPos.y) * 0.2
+    //     this.pivot.style.transform = `translateZ(${perspective}px) rotateX(${deltaY}deg) rotateY(${deltaX}deg)`
+    // }
 
     // ==============
     // event handlers
     // --------------
 
     // mouse
+
     _mouseDownListener(e) {
         window.addEventListener('mousemove', this._mouseMoveListener)
         window.addEventListener('mouseup', this._mouseUpListener)
-        this.initialPos = { x: e.pageX, y: e.pageY, t: e.timeStamp }
+        this.startInteraction()
     }
+
     _mouseUpListener(e) {
         window.removeEventListener('mousemove', this._mouseMoveListener)
         window.removeEventListener('mouseup', this._mouseUpListener)
-        // @TODO inertia
+        this.endInteraction()
     }
+
     _mouseMoveListener(e) {
-        this.move(e.pageX, e.pageY, e.timeStamp)
+        this.addInteraction({ x: e.pageX, y: e.pageY, t: e.timeStamp })
     }
 
     // touch
+
     _touchStartListener(e) {
-        this.initialPos = { x: e.touches[0].pageX, y: e.touches[0].pageY, t: e.timeStamp }
+        this.startInteraction()
     }
 
     _touchEndListener(e) {
-        // @TODO inertia
+        this.endInteraction()
     }
 
     _touchMoveListener(e) {
         e.preventDefault()
-        this.move(e.touches[0].pageX, e.touches[0].pageY, e.timeStamp)
+        this.addInteraction({ x: e.touches[0].pageX, y: e.touches[0].pageY, t: e.timeStamp })
     }
-
-
-    // sensors
-    // _deviceMotionListener(e) {
-    // }
 
     // =========
     // animation
     // ---------
 
-    refresh() {
+    _refresh () {
+        // recurse
+        this.refreshPointer = (typeof cancelAnimationFrame === 'function')
+            ? requestAnimationFrame(this._refresh)
+            : setTimeout(this._refresh, 1000/60)
     }
 }
 document.registerElement('vz-cube', VZCubeElement)
