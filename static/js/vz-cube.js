@@ -1,3 +1,11 @@
+/** @see https://github.com/processing/p5.js/blob/master/src/math/calculation.js */
+function mapNumber(n, start1, stop1, start2 = 0, stop2 = 1) {
+    return ((n - start1) / (stop1 - start1)) * (stop2 - start2) + start2
+}
+function constraint(n, min = 0, max = 1) {
+    return Math.min(Math.max(n, min), max)
+}
+
 class VZArray extends Array {
     get last() {
         return (this.length < 1) ? undefined : this[this.length - 1]
@@ -6,6 +14,7 @@ class VZArray extends Array {
         return (this.length < 1) ? undefined : this[0]
     }
 }
+
 /**
  * @TODO inertia
  */
@@ -58,17 +67,6 @@ class VZCubeElement extends HTMLElement {
 
     endInteraction() {}
 
-    // move(x, y, t) {
-    //     this.currentPos = { x, y, t }
-    //
-    //
-    //
-    //     let perspective = parseInt(window.getComputedStyle(this).perspective)
-    //     let deltaX = (x - this.initialPos.x) * -0.2
-    //     let deltaY = (y - this.initialPos.y) * 0.2
-    //     this.pivot.style.transform = `translateZ(${perspective}px) rotateX(${deltaY}deg) rotateY(${deltaX}deg)`
-    // }
-
     // ==============
     // event handlers
     // --------------
@@ -105,6 +103,7 @@ class VZCubeElement extends HTMLElement {
         e.preventDefault()
         this.addInteraction({ x: e.touches[0].pageX, y: e.touches[0].pageY, t: e.timeStamp })
     }
+
 
     // =========
     // animation
