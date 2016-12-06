@@ -1,3 +1,11 @@
+class VZArray extends Array {
+    get last() {
+        return (this.length < 1) ? undefined : this[this.length - 1]
+    }
+    get first() {
+        return (this.length < 1) ? undefined : this[0]
+    }
+}
 /**
  * @TODO inertia
  */
@@ -6,7 +14,7 @@ class VZCubeElement extends HTMLElement {
         this.refreshPointer = null
         this.initialR = { roll: 0, pitch: 0, yaw: 0 }
         this.currentR = { roll: 0, pitch: 0, yaw: 0 }
-        this.eventStack = []
+        this.eventStack = new VZArray()
 
         // elements
         this.pivot = this.querySelector('vz-cubepivot')
@@ -35,10 +43,14 @@ class VZCubeElement extends HTMLElement {
     }
 
     detachedCallback() {
-        (typeof cancelAnimationFrame === 'function') ? cancelAnimationFrame(this.refreshPointer) : clearTimeout(this.refreshPointer)
+        (typeof cancelAnimationFrame === 'function')
+            ? cancelAnimationFrame(this.refreshPointer)
+            : clearTimeout(this.refreshPointer)
     }
 
-    startInteraction() {}
+    startInteraction() {
+        this.eventStack = new VZArray()
+    }
 
     addInteraction(interaction) {
         this.eventStack.push(interaction)
@@ -49,7 +61,7 @@ class VZCubeElement extends HTMLElement {
     // move(x, y, t) {
     //     this.currentPos = { x, y, t }
     //
-    //     if (!this.pivot) return;
+    //
     //
     //     let perspective = parseInt(window.getComputedStyle(this).perspective)
     //     let deltaX = (x - this.initialPos.x) * -0.2
@@ -99,6 +111,13 @@ class VZCubeElement extends HTMLElement {
     // ---------
 
     _refresh () {
+        if (this.eventStack.length >= 2 && this.pivot) {
+            let perspective = parseInt(window.getComputedStyle(this).perspective)
+            let deltaX = (this.eventStack.last.x - this.eventStack.first.x) * -0.2
+            let deltaY = (this.eventStack.last.y - this.eventStack.first.y) * 0.2
+            this.pivot.style.transform = `translateZ(${perspective}px) rotateX(${deltaY}deg) rotateY(${deltaX}deg)`
+        }
+
         // recurse
         this.refreshPointer = (typeof cancelAnimationFrame === 'function')
             ? requestAnimationFrame(this._refresh)
