@@ -214,3 +214,4 @@ $(document).ready(function () {
 	}
 	window.setInterval(refresh, 40);
 });
+//# sourceMappingURL=cube.js.map
