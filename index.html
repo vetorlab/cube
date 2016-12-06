@@ -28,14 +28,15 @@
             }
 
             section {
-                /*border: 1rem solid gold;*/
                 width: 100vw; height: 100vh;
                 display: flex;
                 justify-content: center;
                 align-items: center;
                 overflow: hidden;
             }
-
+            section > * {
+                flex: 0 0 auto;
+            }
             .cube-viewport {
                 width: 100vmax; height: 100vmax;
                 perspective: 800px;
