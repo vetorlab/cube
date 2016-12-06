@@ -18,6 +18,7 @@ class VZArray extends Array {
 /**
  * @TODO inertia
  * @TODO get/set props from attrs
+ * @TODO motion sensors (how to conciliate with pointer events)
  */
 class VZCubeElement extends HTMLElement {
     createdCallback() {
