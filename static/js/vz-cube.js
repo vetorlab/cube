@@ -11,7 +11,6 @@ function constraint(n, min = 0, max = 1) {
  * @TODO get/set props from attrs
  * @TODO motion sensors (how to conciliate with pointer events)
  * @TODO relativize mouse movement to viewport-size
- * @TODO fix squashed cube on vertical devices
  */
 class VZCubeElement extends HTMLElement {
     createdCallback() {

@@ -27,7 +27,6 @@ function constraint(n) {
  * @TODO get/set props from attrs
  * @TODO motion sensors (how to conciliate with pointer events)
  * @TODO relativize mouse movement to viewport-size
- * @TODO fix squashed cube on vertical devices
  */
 
 var VZCubeElement = function (_HTMLElement) {
