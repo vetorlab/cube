@@ -6,25 +6,18 @@ function constraint(n, min = 0, max = 1) {
     return Math.min(Math.max(n, min), max)
 }
 
-class VZArray extends Array {
-    get last() {
-        return (this.length < 1) ? undefined : this[this.length - 1]
-    }
-    get first() {
-        return (this.length < 1) ? undefined : this[0]
-    }
-}
-
 /**
  * @TODO inertia
  * @TODO get/set props from attrs
  * @TODO motion sensors (how to conciliate with pointer events)
+ * @TODO relativize mouse movement to viewport-size
+ * @TODO fix squashed cube on vertical devices
  */
 class VZCubeElement extends HTMLElement {
     createdCallback() {
         this.initialR = { pitch: 0, yaw: 0 }
         this.currentR = { pitch: 0, yaw: 0 }
-        this.eventStack = new VZArray()
+        this.eventStack = []
 
         // elements
         this.pivot = this.querySelector('vz-cubepivot')
@@ -60,7 +53,7 @@ class VZCubeElement extends HTMLElement {
 
     startInteraction() {
         Object.assign(this.initialR, this.currentR)
-        this.eventStack = new VZArray()
+        this.eventStack = []
     }
 
     addInteraction(interaction) {
@@ -112,12 +105,15 @@ class VZCubeElement extends HTMLElement {
 
     _refresh () {
         if (this.eventStack.length >= 2 && this.pivot) {
+            let firstEvent = this.eventStack[0]
+            let lastEvent = this.eventStack[this.eventStack.length - 1]
+
             // calculate deltas of this interaction
-            let deltaX = (this.eventStack.last.x - this.eventStack.first.x) * -0.2 // side-to-side movement
-            let deltaY = (this.eventStack.last.y - this.eventStack.first.y) * 0.2 // up-down movement
+            let deltaX = (lastEvent.x - firstEvent.x) * -0.2 // side-to-side movement
+            let deltaY = (lastEvent.y - firstEvent.y) * 0.2 // up-down movement
 
             // apply deltas to the initial R of this interaction
-            this.currentR.yaw   = this.initialR.yaw + deltaY, -90, 90 // constraint rotation arount X axis (yaw)
+            this.currentR.yaw   = constraint(this.initialR.yaw + deltaY, -90, 90) // constraint rotation arount X axis (yaw)
             this.currentR.pitch = this.initialR.pitch + deltaX
 
             // apply current R to the pivot element
@@ -133,3 +129,36 @@ class VZCubeElement extends HTMLElement {
     }
 }
 document.registerElement('vz-cube', VZCubeElement)
+
+
+
+// =====================================================
+//                        Polyfills
+// -----------------------------------------------------
+/**
+ * @see https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill
+ */
+if (typeof Object.assign != 'function') {
+    Object.assign = function (target, varArgs) { // .length of function is 2
+        'use strict';
+        if (target == null) { // TypeError if undefined or null
+            throw new TypeError('Cannot convert undefined or null to object');
+        }
+
+        var to = Object(target);
+
+        for (var index = 1; index < arguments.length; index++) {
+            var nextSource = arguments[index];
+
+            if (nextSource != null) { // Skip over if undefined or null
+                for (var nextKey in nextSource) {
+                    // Avoid bugs when hasOwnProperty is shadowed
+                    if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+                        to[nextKey] = nextSource[nextKey];
+                    }
+                }
+            }
+        }
+        return to;
+    };
+}
