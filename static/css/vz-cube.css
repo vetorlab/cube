@@ -29,12 +29,3 @@ vz-cubeface[data-face=right]        { display: block; transform: translateX(calc
 vz-cubeface[data-face=top]          { display: block; transform: translateY(calc(-50% + 1px)) rotateX(-90deg) }
 vz-cubeface[data-face=bottom]       { display: block; transform: translateY(calc(50% - 1px)) rotateX(90deg) }
 vz-cubeface[data-face=back]         { display: block; transform: rotateY(90deg) translateX(calc(-50% + 1px)) rotateY(90deg) }
-
-
-/*
-vz-cubeface[data-face=left]     { transform: rotateY(-90deg) translateX(50%) rotateY(90deg)        rotateY(90deg) translateZ(50%) }
-vz-cubeface[data-face=right]    { transform: rotateY(-90deg) translateX(50%) rotateY(90deg)        rotateY(-90deg) translateZ(50%) }
-vz-cubeface[data-face=top]      { transform: rotateY(-90deg) translateX(50%) rotateY(90deg)        rotateX(-90deg) translateZ(50%) }
-vz-cubeface[data-face=bottom]   { transform: rotateY(-90deg) translateX(50%) rotateY(90deg)        rotateX(90deg) translateZ(50%) }
-vz-cubeface[data-face=back]     { transform: rotateY(-90deg) translateX(50%) rotateY(90deg)        rotateY(180deg) translateZ(50%) }
-*/
