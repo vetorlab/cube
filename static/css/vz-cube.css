@@ -2,7 +2,7 @@ vz-cube, vz-cubepivot, vz-cubeface {
     display: block;
 }
 vz-cube {
-    width: 1920px; height: 1920px;
+    width: 100vmax; height: 100vmax;
     perspective: 600px;
     overflow: hidden;
 }
