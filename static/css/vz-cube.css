@@ -2,27 +2,39 @@ vz-cube, vz-cubepivot, vz-cubeface {
     display: block;
 }
 vz-cube {
-    width: 100vmax; height: 100vmax;
+    width: 1920px; height: 1920px;
     perspective: 800px;
-    transform: translateZ(800px);
     overflow: hidden;
 }
 vz-cubepivot {
     position: relative;
-    width: 100vmax; height: 100vmax;
+    width: 100%; height: 100%;
     transform-style: preserve-3d;
     transform: translateZ(800px);
 }
 vz-cubeface {
     position: absolute;
     left: 0; top: 0;
-    width: 100vmax; height: 100vmax;
+    width: 100%; height: 100%;
     background-size: 100% 100%;
+    background-repeat: no-repeat;
     backface-visibility: hidden;
+
+
+    display: none;
 }
-vz-cubeface[data-face=front]    { transform: rotateY(0deg) translateZ(-49.95vmax) }
-vz-cubeface[data-face=left]     { transform: rotateY(90deg) translateZ(-49.95vmax) }
-vz-cubeface[data-face=right]    { transform: rotateY(-90deg) translateZ(-49.95vmax) }
-vz-cubeface[data-face=top]      { transform: rotateX(-90deg) translateZ(-49.95vmax) }
-vz-cubeface[data-face=bottom]   { transform: rotateX(90deg) translateZ(-49.95vmax) }
-vz-cubeface[data-face=back]     { transform: rotateY(180deg) translateZ(-49.95vmax) }
+vz-cubeface[data-face=front]        { display: block; transform: rotateY(90deg) translateX(calc(50% - 1px)) rotateY(-90deg) }
+vz-cubeface[data-face=left]         { display: block; transform: translateX(calc(-50% + 1px)) rotateY(90deg) }
+vz-cubeface[data-face=right]        { display: block; transform: translateX(calc(50% - 1px)) rotateY(-90deg) }
+vz-cubeface[data-face=top]          { display: block; transform: translateY(calc(-50% + 1px)) rotateX(-90deg) }
+vz-cubeface[data-face=bottom]       { display: block; transform: translateY(calc(50% - 1px)) rotateX(90deg) }
+vz-cubeface[data-face=back]         { display: block; transform: rotateY(90deg) translateX(calc(-50% + 1px)) rotateY(90deg) }
+
+
+/*
+vz-cubeface[data-face=left]     { transform: rotateY(-90deg) translateX(50%) rotateY(90deg)        rotateY(90deg) translateZ(50%) }
+vz-cubeface[data-face=right]    { transform: rotateY(-90deg) translateX(50%) rotateY(90deg)        rotateY(-90deg) translateZ(50%) }
+vz-cubeface[data-face=top]      { transform: rotateY(-90deg) translateX(50%) rotateY(90deg)        rotateX(-90deg) translateZ(50%) }
+vz-cubeface[data-face=bottom]   { transform: rotateY(-90deg) translateX(50%) rotateY(90deg)        rotateX(90deg) translateZ(50%) }
+vz-cubeface[data-face=back]     { transform: rotateY(-90deg) translateX(50%) rotateY(90deg)        rotateY(180deg) translateZ(50%) }
+*/
