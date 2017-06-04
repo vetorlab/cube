@@ -46,10 +46,10 @@ var VZCubeElement = function (_HTMLElement) {
             this.eventStack = [];
 
             // elements
-            this.pivot = this.querySelector('vz-cubepivot');
+            this.pivot = this.querySelector('vz-cubepivot'
 
             // styles
-            this.style.cursor = 'move';
+            );this.style.cursor = 'move';
 
             // events
             this._mouseDownListener = this._mouseDownListener.bind(this);
@@ -152,8 +152,8 @@ var VZCubeElement = function (_HTMLElement) {
                 var deltaY = (lastEvent.y - firstEvent.y) * 0.2; // up-down movement
 
                 // apply deltas to the initial R of this interaction
-                this.currentR.yaw = constraint(this.initialR.yaw + deltaY, -90, 90); // constraint rotation arount X axis (yaw)
-                this.currentR.pitch = this.initialR.pitch + deltaX;
+                this.currentR.yaw = constraint(this.initialR.yaw + deltaY, -90, 90 // constraint rotation arount X axis (yaw)
+                );this.currentR.pitch = this.initialR.pitch + deltaX;
 
                 // apply current R to the pivot element
                 var perspective = parseInt(window.getComputedStyle(this).perspective);
@@ -169,7 +169,7 @@ var VZCubeElement = function (_HTMLElement) {
     return VZCubeElement;
 }(HTMLElement);
 
-document.registerElement('vz-cube', VZCubeElement);
+document.registerElement('vz-cube', VZCubeElement
 
 // =====================================================
 //                        Polyfills
@@ -177,7 +177,7 @@ document.registerElement('vz-cube', VZCubeElement);
 /**
  * @see https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill
  */
-if (typeof Object.assign != 'function') {
+);if (typeof Object.assign != 'function') {
     Object.assign = function (target, varArgs) {
         // .length of function is 2
         'use strict';
