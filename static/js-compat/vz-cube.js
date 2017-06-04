@@ -46,10 +46,10 @@ var VZCubeElement = function (_HTMLElement) {
             this.eventStack = [];
 
             // elements
-            this.pivot = this.querySelector('vz-cubepivot');
+            this.pivot = this.querySelector('vz-cubepivot'
 
             // styles
-            this.style.cursor = 'move';
+            );this.style.cursor = 'move';
 
             // events
             this._mouseDownListener = this._mouseDownListener.bind(this);
@@ -143,17 +143,16 @@ var VZCubeElement = function (_HTMLElement) {
     }, {
         key: '_refresh',
         value: function _refresh() {
-            if (this.eventStack.length >= 2 && this.pivot) {
+            if (this.pivot) {
                 var firstEvent = this.eventStack[0];
                 var lastEvent = this.eventStack[this.eventStack.length - 1];
 
-                // calculate deltas of this interaction
-                var deltaX = (lastEvent.x - firstEvent.x) * -0.2; // side-to-side movement
-                var deltaY = (lastEvent.y - firstEvent.y) * 0.2; // up-down movement
+                var deltaX = firstEvent !== undefined && lastEvent !== undefined ? (lastEvent.x - firstEvent.x) * -0.2 : 0;
+                var deltaY = firstEvent !== undefined && lastEvent !== undefined ? (lastEvent.y - firstEvent.y) * 0.2 : 0;
 
                 // apply deltas to the initial R of this interaction
-                this.currentR.yaw = constraint(this.initialR.yaw + deltaY, -90, 90); // constraint rotation arount X axis (yaw)
-                this.currentR.pitch = this.initialR.pitch + deltaX;
+                this.currentR.yaw = constraint(this.initialR.yaw + deltaY, -90, 90 // constraint rotation arount X axis (yaw)
+                );this.currentR.pitch = this.initialR.pitch + deltaX;
 
                 // apply current R to the pivot element
                 var perspective = parseInt(window.getComputedStyle(this).perspective);
@@ -162,14 +161,14 @@ var VZCubeElement = function (_HTMLElement) {
             }
 
             // recurse
-            this.refreshPointer = typeof cancelAnimationFrame === 'function' ? requestAnimationFrame(this._refresh) : setTimeout(this._refresh, 1000 / 60);
+            this.refreshPointer = typeof requestAnimationFrame === 'function' ? requestAnimationFrame(this._refresh) : setTimeout(this._refresh, 1000 / 30);
         }
     }]);
 
     return VZCubeElement;
 }(HTMLElement);
 
-document.registerElement('vz-cube', VZCubeElement);
+document.registerElement('vz-cube', VZCubeElement
 
 // =====================================================
 //                        Polyfills
@@ -177,7 +176,7 @@ document.registerElement('vz-cube', VZCubeElement);
 /**
  * @see https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill
  */
-if (typeof Object.assign != 'function') {
+);if (typeof Object.assign != 'function') {
     Object.assign = function (target, varArgs) {
         // .length of function is 2
         'use strict';

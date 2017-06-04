@@ -3,15 +3,14 @@ vz-cube, vz-cubepivot, vz-cubeface {
 }
 vz-cube {
     width: 100vmax; height: 100vmax;
-    perspective: 600px;
     overflow: hidden;
+    perspective: 50vmax;
+    transition: 500ms perspective ease-in-out;
 }
 vz-cubepivot {
     position: relative;
     width: 100%; height: 100%;
     transform-style: preserve-3d;
-    transform: translateZ(600px);
-    transition: transform 30ms;
 }
 vz-cubeface {
     position: absolute;
@@ -22,19 +21,24 @@ vz-cubeface {
     backface-visibility: hidden;
     display: none;
 }
-vz-cubeface[data-face=front]        { display: block; transform: rotateY(90deg) translateX(calc(50% - 1px)) rotateY(-90deg) }
-vz-cubeface[data-face=left]         { display: block; transform: translateX(calc(-50% + 1px)) rotateY(90deg) }
-vz-cubeface[data-face=right]        { display: block; transform: translateX(calc(50% - 1px)) rotateY(-90deg) }
-vz-cubeface[data-face=top]          { display: block; transform: translateY(calc(-50% + 1px)) rotateX(-90deg) }
-vz-cubeface[data-face=bottom]       { display: block; transform: translateY(calc(50% - 1px)) rotateX(90deg) }
-vz-cubeface[data-face=back]         { display: block; transform: rotateY(90deg) translateX(calc(-50% + 1px)) rotateY(90deg) }
-
-
-@media screen and (max-width: 480px) {
-    vz-cube { perspective: 200px }
-    vz-cubepivot { transform: translateZ(200px) }
+vz-cubeface {
+  display: block;
 }
-@media screen and (max-width: 960px) {
-    vz-cube { perspective: 400px }
-    vz-cubepivot { transform: translateZ(400px) }
+vz-cubeface[data-face=front] {
+  transform: rotateY(90deg) translateX(calc(50% - 1px)) rotateY(-90deg);
+}
+vz-cubeface[data-face=left] {
+  transform: translateX(calc(-50% + 1px)) rotateY(90deg);
+}
+vz-cubeface[data-face=right] {
+  transform: translateX(calc(50% - 1px)) rotateY(-90deg);
+}
+vz-cubeface[data-face=top] {
+  transform: translateY(calc(-50% + 1px)) rotateX(-90deg);
+}
+vz-cubeface[data-face=bottom] {
+  transform: translateY(calc(50% - 1px)) rotateX(90deg);
+}
+vz-cubeface[data-face=back] {
+  transform: rotateY(90deg) translateX(calc(-50% + 1px)) rotateY(90deg);
 }
