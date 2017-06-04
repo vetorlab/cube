@@ -143,13 +143,12 @@ var VZCubeElement = function (_HTMLElement) {
     }, {
         key: '_refresh',
         value: function _refresh() {
-            if (this.eventStack.length >= 2 && this.pivot) {
+            if (this.pivot) {
                 var firstEvent = this.eventStack[0];
                 var lastEvent = this.eventStack[this.eventStack.length - 1];
 
-                // calculate deltas of this interaction
-                var deltaX = (lastEvent.x - firstEvent.x) * -0.2; // side-to-side movement
-                var deltaY = (lastEvent.y - firstEvent.y) * 0.2; // up-down movement
+                var deltaX = firstEvent !== undefined && lastEvent !== undefined ? (lastEvent.x - firstEvent.x) * -0.2 : 0;
+                var deltaY = firstEvent !== undefined && lastEvent !== undefined ? (lastEvent.y - firstEvent.y) * 0.2 : 0;
 
                 // apply deltas to the initial R of this interaction
                 this.currentR.yaw = constraint(this.initialR.yaw + deltaY, -90, 90 // constraint rotation arount X axis (yaw)
@@ -162,7 +161,7 @@ var VZCubeElement = function (_HTMLElement) {
             }
 
             // recurse
-            this.refreshPointer = typeof cancelAnimationFrame === 'function' ? requestAnimationFrame(this._refresh) : setTimeout(this._refresh, 1000 / 60);
+            this.refreshPointer = typeof requestAnimationFrame === 'function' ? requestAnimationFrame(this._refresh) : setTimeout(this._refresh, 1000 / 30);
         }
     }]);
 

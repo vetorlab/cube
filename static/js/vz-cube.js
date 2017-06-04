@@ -103,28 +103,31 @@ class VZCubeElement extends HTMLElement {
     // ---------
 
     _refresh () {
-        if (this.eventStack.length >= 2 && this.pivot) {
-            let firstEvent = this.eventStack[0]
-            let lastEvent = this.eventStack[this.eventStack.length - 1]
+        if (this.pivot) {
+            const firstEvent = this.eventStack[0]
+            const lastEvent = this.eventStack[this.eventStack.length - 1]
 
-            // calculate deltas of this interaction
-            let deltaX = (lastEvent.x - firstEvent.x) * -0.2 // side-to-side movement
-            let deltaY = (lastEvent.y - firstEvent.y) * 0.2 // up-down movement
+            const deltaX = firstEvent !== undefined && lastEvent !== undefined
+                ? (lastEvent.x - firstEvent.x) * -0.2
+                : 0
+            const deltaY = firstEvent !== undefined && lastEvent !== undefined
+                ? (lastEvent.y - firstEvent.y) * 0.2
+                : 0
 
             // apply deltas to the initial R of this interaction
             this.currentR.yaw   = constraint(this.initialR.yaw + deltaY, -90, 90) // constraint rotation arount X axis (yaw)
             this.currentR.pitch = this.initialR.pitch + deltaX
 
             // apply current R to the pivot element
-            let perspective = parseInt(window.getComputedStyle(this).perspective)
+            const perspective = parseInt(window.getComputedStyle(this).perspective)
 
             this.pivot.style.transform = `translateZ(${perspective}px) rotateX(${this.currentR.yaw}deg) rotateY(${this.currentR.pitch}deg)`
         }
 
         // recurse
-        this.refreshPointer = (typeof cancelAnimationFrame === 'function')
+        this.refreshPointer = (typeof requestAnimationFrame === 'function')
             ? requestAnimationFrame(this._refresh)
-            : setTimeout(this._refresh, 1000/60)
+            : setTimeout(this._refresh, 1000/30)
     }
 }
 document.registerElement('vz-cube', VZCubeElement)
