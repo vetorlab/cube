@@ -1,5 +1,7 @@
 'use strict';
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -41,9 +43,13 @@ var VZCubeElement = function (_HTMLElement) {
     _createClass(VZCubeElement, [{
         key: 'createdCallback',
         value: function createdCallback() {
-            this.initialR = { pitch: 0, yaw: 0 };
-            this.currentR = { pitch: 0, yaw: 0 };
+            this.initialR = { yaw: 0, pitch: 0 };
+            this.currentR = { yaw: 0, pitch: 0 };
             this.eventStack = [];
+
+            // go to point
+            this.isAnimating = false;
+            this.animationDuration = 5000; // ms
 
             // elements
             this.pivot = this.querySelector('vz-cubepivot');
@@ -79,7 +85,7 @@ var VZCubeElement = function (_HTMLElement) {
     }, {
         key: 'startInteraction',
         value: function startInteraction() {
-            Object.assign(this.initialR, this.currentR);
+            this.initialR = _extends({}, this.initialR, this.currentR);
             this.eventStack = [];
         }
     }, {
@@ -100,9 +106,18 @@ var VZCubeElement = function (_HTMLElement) {
     }, {
         key: '_mouseDownListener',
         value: function _mouseDownListener(e) {
+            if (this.isAnimating) return;
+
             window.addEventListener('mousemove', this._mouseMoveListener);
             window.addEventListener('mouseup', this._mouseUpListener);
             this.startInteraction();
+        }
+    }, {
+        key: '_mouseMoveListener',
+        value: function _mouseMoveListener(e) {
+            if (this.isAnimating) return;
+
+            this.addInteraction({ x: e.pageX, y: e.pageY, t: e.timeStamp });
         }
     }, {
         key: '_mouseUpListener',
@@ -111,29 +126,68 @@ var VZCubeElement = function (_HTMLElement) {
             window.removeEventListener('mouseup', this._mouseUpListener);
             this.endInteraction();
         }
-    }, {
-        key: '_mouseMoveListener',
-        value: function _mouseMoveListener(e) {
-            this.addInteraction({ x: e.pageX, y: e.pageY, t: e.timeStamp });
-        }
 
         // touch
 
     }, {
         key: '_touchStartListener',
         value: function _touchStartListener(e) {
+            if (this.isAnimating) return;
+
             this.startInteraction();
+        }
+    }, {
+        key: '_touchMoveListener',
+        value: function _touchMoveListener(e) {
+            if (this.isAnimating) return;
+
+            e.preventDefault();
+            this.addInteraction({ x: e.touches[0].pageX, y: e.touches[0].pageY, t: e.timeStamp });
         }
     }, {
         key: '_touchEndListener',
         value: function _touchEndListener(e) {
             this.endInteraction();
         }
+
+        // =====================
+        // programatic animation
+        // ---------------------
+
     }, {
-        key: '_touchMoveListener',
-        value: function _touchMoveListener(e) {
-            e.preventDefault();
-            this.addInteraction({ x: e.touches[0].pageX, y: e.touches[0].pageY, t: e.timeStamp });
+        key: 'animateTo',
+        value: function animateTo(yaw, pitch) {
+            var duration = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.animationDuration;
+            var callback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
+
+            this.startInteraction();
+            this.isAnimating = true;
+            this.animationStartTime = Date.now();
+            this.animationStartPos = this.currentR;
+            this.animationEndTime = Date.now() + duration;
+            this.animationEndPos = { yaw: yaw, pitch: pitch };
+            this.animationEndCallback = callback;
+        }
+    }, {
+        key: 'addAnimationInteraction',
+        value: function addAnimationInteraction() {
+            var t = Date.now();
+            var delta = map(t, this.animationStartTime, this.animationEndTime, 0, 1);
+            var x = map(delta, 1, 0, this.animationStartPos.yaw, this.animationEndPos.yaw);
+            var y = map(delta, 1, 0, this.animationStartPos.pitch, this.animationEndPos.pitch);
+
+            console.log(this.animationStartPos);
+
+            this.addInteraction({ x: x, y: y, t: t, delta: delta });
+        }
+    }, {
+        key: 'endAnimation',
+        value: function endAnimation() {
+            this.isAnimating = false;
+
+            if (typeof this.animationEndCallback === 'function') {
+                this.animationEndCallback.call(this);
+            }
         }
 
         // =========
@@ -143,6 +197,11 @@ var VZCubeElement = function (_HTMLElement) {
     }, {
         key: '_refresh',
         value: function _refresh() {
+            if (this.isAnimating) {
+                this.addAnimationInteraction();
+                if (Date.now() > this.animationEndTime) this.endAnimation();
+            }
+
             if (this.pivot) {
                 var firstEvent = this.eventStack[0];
                 var lastEvent = this.eventStack[this.eventStack.length - 1];
@@ -151,13 +210,13 @@ var VZCubeElement = function (_HTMLElement) {
                 var deltaY = firstEvent !== undefined && lastEvent !== undefined ? (lastEvent.y - firstEvent.y) * 0.2 : 0;
 
                 // apply deltas to the initial R of this interaction
-                this.currentR.yaw = constraint(this.initialR.yaw + deltaY, -90, 90); // constraint rotation arount X axis (yaw)
-                this.currentR.pitch = this.initialR.pitch + deltaX;
+                this.currentR.yaw = this.initialR.yaw + deltaX;
+                this.currentR.pitch = constraint(this.initialR.pitch + deltaY, -90, 90); // constraint rotation arount X axis (yaw)
 
                 // apply current R to the pivot element
                 var perspective = parseInt(window.getComputedStyle(this).perspective);
 
-                this.pivot.style.transform = 'translateZ(' + perspective + 'px) rotateX(' + this.currentR.yaw + 'deg) rotateY(' + this.currentR.pitch + 'deg)';
+                this.pivot.style.transform = 'translateZ(' + perspective + 'px) rotateX(' + this.currentR.pitch + 'deg) rotateY(' + this.currentR.yaw + 'deg)';
             }
 
             // recurse

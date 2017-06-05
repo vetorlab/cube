@@ -4,7 +4,7 @@ vz-cube, vz-cubepivot, vz-cubeface {
 vz-cube {
     width: 100vmax; height: 100vmax;
     overflow: hidden;
-    perspective: 50vmax;
+    perspective: 40vmax;
     transition: 500ms perspective ease-in-out;
 }
 vz-cubepivot {
@@ -53,6 +53,7 @@ a {
     border-radius: 50%;
     opacity: .666;
     transform: translateZ(calc(-50vmax + 1px));
+    cursor: pointer;
 }
 a:nth-of-type(1) {
     transform: rotateX(-10deg) rotateY(10deg) translateZ(calc(-50vmax + 1px));
