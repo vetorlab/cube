@@ -48,6 +48,7 @@ class VZCubeElement extends HTMLElement {
         this._animationEndPos       = { yaw, pitch }
         this._animationStartTime    = Date.now()
         this._animationEndTime      = Date.now() + duration
+        this._animationEndCallback  = callback
     }
 
     easing(t) {
@@ -122,7 +123,13 @@ class VZCubeElement extends HTMLElement {
         this.pitch  = map(this.easing(t), 0, 1, this._animationStartPos.pitch, this._animationEndPos.pitch)
 
         if (this._animationEndTime <= now) {
-            this._isAnimating = false
+            this._isAnimating   = false
+            this.yaw            = this._animationEndPos.yaw
+            this.pitch          = this._animationEndPos.pitch
+
+            if (typeof this._animationEndCallback === 'function') {
+                this._animationEndCallback.call(this)
+            }
         }
     }
 
@@ -132,6 +139,8 @@ class VZCubeElement extends HTMLElement {
         const perspective = getComputedStyle(this).perspective
 
         this._pivot.style.transform = `translateZ(${perspective}) rotateX(${this.pitch}deg) rotateY(${this.yaw}deg)`
+
+        console.log(this.yaw, this.pitch)
 
         // recurse
         this._refreshId = typeof requestAnimationFrame === 'function'

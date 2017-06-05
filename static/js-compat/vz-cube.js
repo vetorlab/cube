@@ -86,6 +86,7 @@ var VZCubeElement = function (_HTMLElement) {
             this._animationEndPos = { yaw: yaw, pitch: pitch };
             this._animationStartTime = Date.now();
             this._animationEndTime = Date.now() + duration;
+            this._animationEndCallback = callback;
         }
     }, {
         key: 'easing',
@@ -171,6 +172,12 @@ var VZCubeElement = function (_HTMLElement) {
 
             if (this._animationEndTime <= now) {
                 this._isAnimating = false;
+                this.yaw = this._animationEndPos.yaw;
+                this.pitch = this._animationEndPos.pitch;
+
+                if (typeof this._animationEndCallback === 'function') {
+                    this._animationEndCallback.call(this);
+                }
             }
         }
     }, {
@@ -181,6 +188,8 @@ var VZCubeElement = function (_HTMLElement) {
             var perspective = getComputedStyle(this).perspective;
 
             this._pivot.style.transform = 'translateZ(' + perspective + ') rotateX(' + this.pitch + 'deg) rotateY(' + this.yaw + 'deg)';
+
+            console.log(this.yaw, this.pitch);
 
             // recurse
             this._refreshId = typeof requestAnimationFrame === 'function' ? requestAnimationFrame(this._refresh) : setTimeout(this._refresh, 1000 / 30);
