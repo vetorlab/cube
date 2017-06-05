@@ -49,6 +49,9 @@ var VZCubeElement = function (_HTMLElement) {
         value: function createdCallback() {
             this._isAnimating = false;
             this._isDragging = false;
+            this._isFrozen = false;
+
+            this._draggingMultiplier = 0.1;
 
             this.yaw = 0;
             this.pitch = 0;
@@ -89,8 +92,18 @@ var VZCubeElement = function (_HTMLElement) {
             this._animationEndCallback = callback;
         }
     }, {
-        key: 'easing',
-        value: function easing(t) {
+        key: 'freeze',
+        value: function freeze() {
+            this._isFrozen = true;
+        }
+    }, {
+        key: 'unfreeze',
+        value: function unfreeze() {
+            this._isFrozen = false;
+        }
+    }, {
+        key: '_easing',
+        value: function _easing(t) {
             return t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
         }
     }, {
@@ -124,11 +137,10 @@ var VZCubeElement = function (_HTMLElement) {
     }, {
         key: '_handleMouseMove',
         value: function _handleMouseMove(e) {
-            if (this._isAnimating) return;
-            if (!this._isDragging) return;
+            if (!this._isDragging || this._isAnimating || this._isFrozen) return;
 
-            this.yaw += (this._lastDragEvent.pageX - e.pageX) * 0.1;
-            this.pitch -= constraint((this._lastDragEvent.pageY - e.pageY) * 0.1, -70, 70);
+            this.yaw += (this._lastDragEvent.pageX - e.pageX) * this._draggingMultiplier;
+            this.pitch -= constraint((this._lastDragEvent.pageY - e.pageY) * this._draggingMultiplier, -70, 70);
 
             this._lastDragEvent = e;
         }
@@ -146,11 +158,10 @@ var VZCubeElement = function (_HTMLElement) {
     }, {
         key: '_handleTouchMove',
         value: function _handleTouchMove(e) {
-            if (this._isAnimating) return;
-            if (!this._isDragging) return;
+            if (!this._isDragging || this._isAnimating || this._isFrozen) return;
 
-            this.yaw += (this._lastDragEvent.pageX - e.touches[0].pageX) * 0.1;
-            this.pitch -= (this._lastDragEvent.pageY - e.touches[0].pageY) * 0.1;
+            this.yaw += (this._lastDragEvent.pageX - e.touches[0].pageX) * this._draggingMultiplier;
+            this.pitch -= (this._lastDragEvent.pageY - e.touches[0].pageY) * this._draggingMultiplier;
 
             this._lastDragEvent = e.touches[0];
         }
@@ -167,8 +178,8 @@ var VZCubeElement = function (_HTMLElement) {
             var now = Date.now();
             var t = map(now, this._animationStartTime, this._animationEndTime, 0, 1);
 
-            this.yaw = map(this.easing(t), 0, 1, this._animationStartPos.yaw, this._animationEndPos.yaw);
-            this.pitch = map(this.easing(t), 0, 1, this._animationStartPos.pitch, this._animationEndPos.pitch);
+            this.yaw = map(this._easing(t), 0, 1, this._animationStartPos.yaw, this._animationEndPos.yaw);
+            this.pitch = map(this._easing(t), 0, 1, this._animationStartPos.pitch, this._animationEndPos.pitch);
 
             if (this._animationEndTime <= now) {
                 this._isAnimating = false;
@@ -188,8 +199,6 @@ var VZCubeElement = function (_HTMLElement) {
             var perspective = getComputedStyle(this).perspective;
 
             this._pivot.style.transform = 'translateZ(' + perspective + ') rotateX(' + this.pitch + 'deg) rotateY(' + this.yaw + 'deg)';
-
-            console.log(this.yaw, this.pitch);
 
             // recurse
             this._refreshId = typeof requestAnimationFrame === 'function' ? requestAnimationFrame(this._refresh) : setTimeout(this._refresh, 1000 / 30);
