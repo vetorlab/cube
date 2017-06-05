@@ -199,9 +199,7 @@ class VZCubeFeature extends HTMLElement {
     }
 
     _refresh() {
-        console.log("CACETE")
-
-        this.style.transform = `rotateY(${this.yaw}deg) rotateX(${this.pitch}deg) translateZ(calc(-50vmax + 1rem))`
+        this.style.transform = `rotateY(${this.yaw}deg) rotateX(${this.pitch}deg) translateZ(calc(-50vmax + 2rem))`
     }
 
     get yaw() {
