@@ -11,11 +11,9 @@ function tail(ls) { return ls.slice(1) }
 function init(ls) { return ls.slice(0, -1) }
 function last(ls) { return ls[ls.length - 1] }
 
-
-
 class VZCubeElement extends HTMLElement {
     createdCallback() {
-        this.isAnimating    = false
+        this._isAnimating    = false
         this._isDragging     = false
 
         this.yaw    = 0
@@ -27,6 +25,7 @@ class VZCubeElement extends HTMLElement {
         this._handleTouchStart  = this._handleTouchStart.bind(this)
         this._handleTouchMove   = this._handleTouchMove.bind(this)
         this._handleTouchEnd    = this._handleTouchEnd.bind(this)
+        this._processAnimation  = this._processAnimation.bind(this)
         this._refresh           = this._refresh.bind(this)
     }
 
@@ -41,6 +40,18 @@ class VZCubeElement extends HTMLElement {
             ? cancelAnimationFrame(this._refreshId)
             : clearTimeout(this._refreshId)
         this._removeEventHandlers()
+    }
+
+    animateTo(yaw, pitch, duration = 1000, callback = null) {
+        this._isAnimating = true
+        this._animationStartPos     = { yaw: this.yaw, pitch: this.pitch }
+        this._animationEndPos       = { yaw, pitch }
+        this._animationStartTime    = Date.now()
+        this._animationEndTime      = Date.now() + duration
+    }
+
+    easing(t) {
+        return t<.5 ? 2*t*t : -1+(4-2*t)*t
     }
 
     _addEventHandlers() {
@@ -69,10 +80,11 @@ class VZCubeElement extends HTMLElement {
     }
 
     _handleMouseMove(e) {
+        if (this._isAnimating) return
         if (!this._isDragging) return
 
         this.yaw    += (this._lastDragEvent.pageX - e.pageX) * 0.1
-        this.pitch  -= -(this._lastDragEvent.pageY - e.pageY) * 0.1
+        this.pitch  -= constraint((this._lastDragEvent.pageY - e.pageY) * 0.1, -70, 70)
 
         this._lastDragEvent = e
     }
@@ -87,6 +99,7 @@ class VZCubeElement extends HTMLElement {
     }
 
     _handleTouchMove(e) {
+        if (this._isAnimating) return
         if (!this._isDragging) return
 
         this.yaw    += (this._lastDragEvent.pageX - e.touches[0].pageX) * 0.1
@@ -99,8 +112,23 @@ class VZCubeElement extends HTMLElement {
         this._isDragging = false
     }
 
+    _processAnimation() {
+        if (!this._isAnimating) return
+
+        const now = Date.now()
+        const t = map(now, this._animationStartTime, this._animationEndTime, 0, 1)
+
+        this.yaw    = map(this.easing(t), 0, 1, this._animationStartPos.yaw, this._animationEndPos.yaw)
+        this.pitch  = map(this.easing(t), 0, 1, this._animationStartPos.pitch, this._animationEndPos.pitch)
+
+        if (this._animationEndTime <= now) {
+            this._isAnimating = false
+        }
+    }
 
     _refresh() {
+        this._processAnimation()
+
         const perspective = getComputedStyle(this).perspective
 
         this._pivot.style.transform = `translateZ(${perspective}) rotateX(${this.pitch}deg) rotateY(${this.yaw}deg)`

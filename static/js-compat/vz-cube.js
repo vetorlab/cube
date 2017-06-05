@@ -47,7 +47,7 @@ var VZCubeElement = function (_HTMLElement) {
     _createClass(VZCubeElement, [{
         key: 'createdCallback',
         value: function createdCallback() {
-            this.isAnimating = false;
+            this._isAnimating = false;
             this._isDragging = false;
 
             this.yaw = 0;
@@ -59,6 +59,7 @@ var VZCubeElement = function (_HTMLElement) {
             this._handleTouchStart = this._handleTouchStart.bind(this);
             this._handleTouchMove = this._handleTouchMove.bind(this);
             this._handleTouchEnd = this._handleTouchEnd.bind(this);
+            this._processAnimation = this._processAnimation.bind(this);
             this._refresh = this._refresh.bind(this);
         }
     }, {
@@ -73,6 +74,23 @@ var VZCubeElement = function (_HTMLElement) {
         value: function detachedCallback() {
             typeof cancelAnimationFrame === 'function' ? cancelAnimationFrame(this._refreshId) : clearTimeout(this._refreshId);
             this._removeEventHandlers();
+        }
+    }, {
+        key: 'animateTo',
+        value: function animateTo(yaw, pitch) {
+            var duration = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1000;
+            var callback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+
+            this._isAnimating = true;
+            this._animationStartPos = { yaw: this.yaw, pitch: this.pitch };
+            this._animationEndPos = { yaw: yaw, pitch: pitch };
+            this._animationStartTime = Date.now();
+            this._animationEndTime = Date.now() + duration;
+        }
+    }, {
+        key: 'easing',
+        value: function easing(t) {
+            return t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
         }
     }, {
         key: '_addEventHandlers',
@@ -105,10 +123,11 @@ var VZCubeElement = function (_HTMLElement) {
     }, {
         key: '_handleMouseMove',
         value: function _handleMouseMove(e) {
+            if (this._isAnimating) return;
             if (!this._isDragging) return;
 
             this.yaw += (this._lastDragEvent.pageX - e.pageX) * 0.1;
-            this.pitch -= -(this._lastDragEvent.pageY - e.pageY) * 0.1;
+            this.pitch -= constraint((this._lastDragEvent.pageY - e.pageY) * 0.1, -70, 70);
 
             this._lastDragEvent = e;
         }
@@ -126,6 +145,7 @@ var VZCubeElement = function (_HTMLElement) {
     }, {
         key: '_handleTouchMove',
         value: function _handleTouchMove(e) {
+            if (this._isAnimating) return;
             if (!this._isDragging) return;
 
             this.yaw += (this._lastDragEvent.pageX - e.touches[0].pageX) * 0.1;
@@ -139,8 +159,25 @@ var VZCubeElement = function (_HTMLElement) {
             this._isDragging = false;
         }
     }, {
+        key: '_processAnimation',
+        value: function _processAnimation() {
+            if (!this._isAnimating) return;
+
+            var now = Date.now();
+            var t = map(now, this._animationStartTime, this._animationEndTime, 0, 1);
+
+            this.yaw = map(this.easing(t), 0, 1, this._animationStartPos.yaw, this._animationEndPos.yaw);
+            this.pitch = map(this.easing(t), 0, 1, this._animationStartPos.pitch, this._animationEndPos.pitch);
+
+            if (this._animationEndTime <= now) {
+                this._isAnimating = false;
+            }
+        }
+    }, {
         key: '_refresh',
         value: function _refresh() {
+            this._processAnimation();
+
             var perspective = getComputedStyle(this).perspective;
 
             this._pivot.style.transform = 'translateZ(' + perspective + ') rotateX(' + this.pitch + 'deg) rotateY(' + this.yaw + 'deg)';
