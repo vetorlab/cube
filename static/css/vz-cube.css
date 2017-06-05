@@ -45,7 +45,7 @@ vz-cubeface[data-face=back] {
 /*
     Features
 */
-a {
+vz-cube-feature {
     width: 2rem;
     height: 2rem;
     margin-top: -1rem;

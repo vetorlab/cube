@@ -11,8 +11,13 @@ function tail(ls) { return ls.slice(1) }
 function init(ls) { return ls.slice(0, -1) }
 function last(ls) { return ls[ls.length - 1] }
 
+
+
+
 class VZCubeElement extends HTMLElement {
-    createdCallback() {
+    constructor() {
+        super()
+
         this._isAnimating   = false
         this._isDragging    = false
         this._isFrozen      = false
@@ -32,13 +37,13 @@ class VZCubeElement extends HTMLElement {
         this._refresh           = this._refresh.bind(this)
     }
 
-    attachedCallback() {
+    connectedCallback() {
         this._pivot = this.querySelector('vz-cubepivot')
         this._addEventHandlers()
         this._refresh()
     }
 
-    detachedCallback() {
+    disconnectedCallback() {
         typeof cancelAnimationFrame === 'function'
             ? cancelAnimationFrame(this._refreshId)
             : clearTimeout(this._refreshId)
@@ -164,19 +169,22 @@ class VZCubeElement extends HTMLElement {
     }
 }
 
-document.registerElement('vz-cube', VZCubeElement)
+customElements.define('vz-cube', VZCubeElement)
 
 
 
-class VZCubeFeature extends HTMLAnchorElement {
-    createdCallback() {
+class VZCubeFeature extends HTMLElement {
+    constructor () {
+        super()
+
         this._yaw       = this.getAttribute('yaw')
         this._pitch     = this.getAttribute('pitch')
         this._refresh   = this._refresh.bind(this)
+
+        this._refresh()
     }
 
-    attachedCallback() {
-        this._refresh()
+    connectedCallback() {
     }
 
     attributeChangedCallback(attrName, oldVal, newVal) {
@@ -191,7 +199,9 @@ class VZCubeFeature extends HTMLAnchorElement {
     }
 
     _refresh() {
-        this.style.transform = `rotateY(${this.yaw}deg) rotateX(${this.pitch}deg) translateZ(calc(-50vmax + 1px))`
+        console.log("CACETE")
+
+        this.style.transform = `rotateY(${this.yaw}deg) rotateX(${this.pitch}deg) translateZ(calc(-50vmax + 1rem))`
     }
 
     get yaw() {
@@ -201,7 +211,5 @@ class VZCubeFeature extends HTMLAnchorElement {
         return this._pitch
     }
 }
-document.registerElement('vz-cube-feature', {
-    prototype: VZCubeFeature.prototype,
-    extends: 'a'
-});
+
+customElements.define('vz-cube-feature', VZCubeFeature);

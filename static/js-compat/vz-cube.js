@@ -41,40 +41,38 @@ var VZCubeElement = function (_HTMLElement) {
     function VZCubeElement() {
         _classCallCheck(this, VZCubeElement);
 
-        return _possibleConstructorReturn(this, (VZCubeElement.__proto__ || Object.getPrototypeOf(VZCubeElement)).apply(this, arguments));
+        var _this = _possibleConstructorReturn(this, (VZCubeElement.__proto__ || Object.getPrototypeOf(VZCubeElement)).call(this));
+
+        _this._isAnimating = false;
+        _this._isDragging = false;
+        _this._isFrozen = false;
+
+        _this._draggingMultiplier = 0.1;
+
+        _this.yaw = 0;
+        _this.pitch = 0;
+
+        _this._handleMouseDown = _this._handleMouseDown.bind(_this);
+        _this._handleMouseMove = _this._handleMouseMove.bind(_this);
+        _this._handleMouseUp = _this._handleMouseUp.bind(_this);
+        _this._handleTouchStart = _this._handleTouchStart.bind(_this);
+        _this._handleTouchMove = _this._handleTouchMove.bind(_this);
+        _this._handleTouchEnd = _this._handleTouchEnd.bind(_this);
+        _this._processAnimation = _this._processAnimation.bind(_this);
+        _this._refresh = _this._refresh.bind(_this);
+        return _this;
     }
 
     _createClass(VZCubeElement, [{
-        key: 'createdCallback',
-        value: function createdCallback() {
-            this._isAnimating = false;
-            this._isDragging = false;
-            this._isFrozen = false;
-
-            this._draggingMultiplier = 0.1;
-
-            this.yaw = 0;
-            this.pitch = 0;
-
-            this._handleMouseDown = this._handleMouseDown.bind(this);
-            this._handleMouseMove = this._handleMouseMove.bind(this);
-            this._handleMouseUp = this._handleMouseUp.bind(this);
-            this._handleTouchStart = this._handleTouchStart.bind(this);
-            this._handleTouchMove = this._handleTouchMove.bind(this);
-            this._handleTouchEnd = this._handleTouchEnd.bind(this);
-            this._processAnimation = this._processAnimation.bind(this);
-            this._refresh = this._refresh.bind(this);
-        }
-    }, {
-        key: 'attachedCallback',
-        value: function attachedCallback() {
+        key: 'connectedCallback',
+        value: function connectedCallback() {
             this._pivot = this.querySelector('vz-cubepivot');
             this._addEventHandlers();
             this._refresh();
         }
     }, {
-        key: 'detachedCallback',
-        value: function detachedCallback() {
+        key: 'disconnectedCallback',
+        value: function disconnectedCallback() {
             typeof cancelAnimationFrame === 'function' ? cancelAnimationFrame(this._refreshId) : clearTimeout(this._refreshId);
 
             this._removeEventHandlers();
@@ -223,29 +221,27 @@ var VZCubeElement = function (_HTMLElement) {
     return VZCubeElement;
 }(HTMLElement);
 
-document.registerElement('vz-cube', VZCubeElement);
+customElements.define('vz-cube', VZCubeElement);
 
-var VZCubeFeature = function (_HTMLAnchorElement) {
-    _inherits(VZCubeFeature, _HTMLAnchorElement);
+var VZCubeFeature = function (_HTMLElement2) {
+    _inherits(VZCubeFeature, _HTMLElement2);
 
     function VZCubeFeature() {
         _classCallCheck(this, VZCubeFeature);
 
-        return _possibleConstructorReturn(this, (VZCubeFeature.__proto__ || Object.getPrototypeOf(VZCubeFeature)).apply(this, arguments));
+        var _this3 = _possibleConstructorReturn(this, (VZCubeFeature.__proto__ || Object.getPrototypeOf(VZCubeFeature)).call(this));
+
+        _this3._yaw = _this3.getAttribute('yaw');
+        _this3._pitch = _this3.getAttribute('pitch');
+        _this3._refresh = _this3._refresh.bind(_this3);
+
+        _this3._refresh();
+        return _this3;
     }
 
     _createClass(VZCubeFeature, [{
-        key: 'createdCallback',
-        value: function createdCallback() {
-            this._yaw = this.getAttribute('yaw');
-            this._pitch = this.getAttribute('pitch');
-            this._refresh = this._refresh.bind(this);
-        }
-    }, {
-        key: 'attachedCallback',
-        value: function attachedCallback() {
-            this._refresh();
-        }
+        key: 'connectedCallback',
+        value: function connectedCallback() {}
     }, {
         key: 'attributeChangedCallback',
         value: function attributeChangedCallback(attrName, oldVal, newVal) {
@@ -261,7 +257,9 @@ var VZCubeFeature = function (_HTMLAnchorElement) {
     }, {
         key: '_refresh',
         value: function _refresh() {
-            this.style.transform = 'rotateY(' + this.yaw + 'deg) rotateX(' + this.pitch + 'deg) translateZ(calc(-50vmax + 1px))';
+            console.log("CACETE");
+
+            this.style.transform = 'rotateY(' + this.yaw + 'deg) rotateX(' + this.pitch + 'deg) translateZ(calc(-50vmax + 1rem))';
         }
     }, {
         key: 'yaw',
@@ -276,10 +274,7 @@ var VZCubeFeature = function (_HTMLAnchorElement) {
     }]);
 
     return VZCubeFeature;
-}(HTMLAnchorElement);
+}(HTMLElement);
 
-document.registerElement('vz-cube-feature', {
-    prototype: VZCubeFeature.prototype,
-    extends: 'a'
-});
+customElements.define('vz-cube-feature', VZCubeFeature);
 //# sourceMappingURL=vz-cube.js.map
