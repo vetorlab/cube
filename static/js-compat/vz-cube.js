@@ -1,7 +1,5 @@
 'use strict';
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -24,12 +22,18 @@ function constraint(n) {
     return Math.min(Math.max(n, min), max);
 }
 
-/**
- * @TODO inertia
- * @TODO get/set props from attrs
- * @TODO motion sensors (how to conciliate with pointer events)
- * @TODO relativize mouse movement to viewport-size
- */
+function head(ls) {
+    return ls[0];
+}
+function tail(ls) {
+    return ls.slice(1);
+}
+function init(ls) {
+    return ls.slice(0, -1);
+}
+function last(ls) {
+    return ls[ls.length - 1];
+}
 
 var VZCubeElement = function (_HTMLElement) {
     _inherits(VZCubeElement, _HTMLElement);
@@ -43,184 +47,106 @@ var VZCubeElement = function (_HTMLElement) {
     _createClass(VZCubeElement, [{
         key: 'createdCallback',
         value: function createdCallback() {
-            this.initialR = { yaw: 0, pitch: 0 };
-            this.currentR = { yaw: 0, pitch: 0 };
-            this.eventStack = [];
-
-            // go to point
             this.isAnimating = false;
-            this.animationDuration = 5000; // ms
+            this._isDragging = false;
 
-            // elements
-            this.pivot = this.querySelector('vz-cubepivot');
+            this.yaw = 0;
+            this.pitch = 0;
 
-            // styles
-            // this.style.cursor = 'move'
-
-            // events
-            this._mouseDownListener = this._mouseDownListener.bind(this);
-            this._mouseUpListener = this._mouseUpListener.bind(this);
-            this._mouseMoveListener = this._mouseMoveListener.bind(this);
-            this._touchStartListener = this._touchStartListener.bind(this);
-            this._touchEndListener = this._touchEndListener.bind(this);
-            this._touchMoveListener = this._touchMoveListener.bind(this);
+            this._handleMouseDown = this._handleMouseDown.bind(this);
+            this._handleMouseMove = this._handleMouseMove.bind(this);
+            this._handleMouseUp = this._handleMouseUp.bind(this);
+            this._handleTouchStart = this._handleTouchStart.bind(this);
+            this._handleTouchMove = this._handleTouchMove.bind(this);
+            this._handleTouchEnd = this._handleTouchEnd.bind(this);
             this._refresh = this._refresh.bind(this);
-
-            this.addEventListener('mousedown', this._mouseDownListener);
-            this.addEventListener('touchstart', this._touchStartListener, true);
-            this.addEventListener('touchmove', this._touchMoveListener, true);
-            this.addEventListener('touchend', this._touchEndListener, true);
-            this.addEventListener('touchcancel', this._touchEndListener, true);
         }
     }, {
         key: 'attachedCallback',
         value: function attachedCallback() {
+            this._pivot = this.querySelector('vz-cubepivot');
+            this._addEventHandlers();
             this._refresh();
         }
     }, {
         key: 'detachedCallback',
         value: function detachedCallback() {
-            typeof cancelAnimationFrame === 'function' ? cancelAnimationFrame(this.refreshPointer) : clearTimeout(this.refreshPointer);
+            typeof cancelAnimationFrame === 'function' ? cancelAnimationFrame(this._refreshId) : clearTimeout(this._refreshId);
+            this._removeEventHandlers();
         }
     }, {
-        key: 'startInteraction',
-        value: function startInteraction() {
-            this.initialR = _extends({}, this.initialR, this.currentR);
-            this.eventStack = [];
+        key: '_addEventHandlers',
+        value: function _addEventHandlers() {
+            this.addEventListener('mousedown', this._handleMouseDown);
+            window.addEventListener('mousemove', this._handleMouseMove);
+            window.addEventListener('mouseup', this._handleMouseUp);
+            this.addEventListener('touchstart', this._handleTouchStart);
+            this.addEventListener('touchmove', this._handleTouchMove);
+            this.addEventListener('touchend', this._handleTouchEnd);
+            this.addEventListener('touchcancel', this._handleTouchEnd);
         }
     }, {
-        key: 'addInteraction',
-        value: function addInteraction(interaction) {
-            this.eventStack.push(interaction);
+        key: '_removeEventHandlers',
+        value: function _removeEventHandlers() {
+            this.removeEventListener('mousedown', this._handleMouseDown);
+            window.removeEventListener('mousemove', this._handleMouseMove);
+            window.removeEventListener('mouseup', this._handleMouseUp);
+            this.removeEventListener('touchstart', this._handleTouchStart);
+            this.removeEventListener('touchmove', this._handleTouchMove);
+            this.removeEventListener('touchend', this._handleTouchEnd);
+            this.removeEventListener('touchcancel', this._handleTouchEnd);
         }
     }, {
-        key: 'endInteraction',
-        value: function endInteraction() {}
-
-        // ==============
-        // event handlers
-        // --------------
-
-        // mouse
-
-    }, {
-        key: '_mouseDownListener',
-        value: function _mouseDownListener(e) {
-            if (this.isAnimating) return;
-
-            window.addEventListener('mousemove', this._mouseMoveListener);
-            window.addEventListener('mouseup', this._mouseUpListener);
-            this.startInteraction();
+        key: '_handleMouseDown',
+        value: function _handleMouseDown(e) {
+            this._isDragging = true;
+            this._lastDragEvent = e;
         }
     }, {
-        key: '_mouseMoveListener',
-        value: function _mouseMoveListener(e) {
-            if (this.isAnimating) return;
+        key: '_handleMouseMove',
+        value: function _handleMouseMove(e) {
+            if (!this._isDragging) return;
 
-            this.addInteraction({ x: e.pageX, y: e.pageY, t: e.timeStamp });
+            this.yaw += (this._lastDragEvent.pageX - e.pageX) * 0.1;
+            this.pitch -= -(this._lastDragEvent.pageY - e.pageY) * 0.1;
+
+            this._lastDragEvent = e;
         }
     }, {
-        key: '_mouseUpListener',
-        value: function _mouseUpListener(e) {
-            window.removeEventListener('mousemove', this._mouseMoveListener);
-            window.removeEventListener('mouseup', this._mouseUpListener);
-            this.endInteraction();
-        }
-
-        // touch
-
-    }, {
-        key: '_touchStartListener',
-        value: function _touchStartListener(e) {
-            if (this.isAnimating) return;
-
-            this.startInteraction();
+        key: '_handleMouseUp',
+        value: function _handleMouseUp(e) {
+            this._isDragging = false;
         }
     }, {
-        key: '_touchMoveListener',
-        value: function _touchMoveListener(e) {
-            if (this.isAnimating) return;
-
-            e.preventDefault();
-            this.addInteraction({ x: e.touches[0].pageX, y: e.touches[0].pageY, t: e.timeStamp });
+        key: '_handleTouchStart',
+        value: function _handleTouchStart(e) {
+            this._isDragging = true;
+            this._lastDragEvent = e.touches[0];
         }
     }, {
-        key: '_touchEndListener',
-        value: function _touchEndListener(e) {
-            this.endInteraction();
-        }
+        key: '_handleTouchMove',
+        value: function _handleTouchMove(e) {
+            if (!this._isDragging) return;
 
-        // =====================
-        // programatic animation
-        // ---------------------
+            this.yaw += (this._lastDragEvent.pageX - e.touches[0].pageX) * 0.1;
+            this.pitch -= (this._lastDragEvent.pageY - e.touches[0].pageY) * 0.1;
 
-    }, {
-        key: 'animateTo',
-        value: function animateTo(yaw, pitch) {
-            var duration = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.animationDuration;
-            var callback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
-
-            this.startInteraction();
-            this.isAnimating = true;
-            this.animationStartTime = Date.now();
-            this.animationStartPos = this.currentR;
-            this.animationEndTime = Date.now() + duration;
-            this.animationEndPos = { yaw: yaw, pitch: pitch };
-            this.animationEndCallback = callback;
+            this._lastDragEvent = e.touches[0];
         }
     }, {
-        key: 'addAnimationInteraction',
-        value: function addAnimationInteraction() {
-            var t = Date.now();
-            var delta = map(t, this.animationStartTime, this.animationEndTime, 0, 1);
-            var x = map(delta, 1, 0, this.animationStartPos.yaw, this.animationEndPos.yaw);
-            var y = map(delta, 1, 0, this.animationStartPos.pitch, this.animationEndPos.pitch);
-
-            console.log(this.animationStartPos);
-
-            this.addInteraction({ x: x, y: y, t: t, delta: delta });
+        key: '_handleTouchEnd',
+        value: function _handleTouchEnd(e) {
+            this._isDragging = false;
         }
-    }, {
-        key: 'endAnimation',
-        value: function endAnimation() {
-            this.isAnimating = false;
-
-            if (typeof this.animationEndCallback === 'function') {
-                this.animationEndCallback.call(this);
-            }
-        }
-
-        // =========
-        // animation
-        // ---------
-
     }, {
         key: '_refresh',
         value: function _refresh() {
-            if (this.isAnimating) {
-                this.addAnimationInteraction();
-                if (Date.now() > this.animationEndTime) this.endAnimation();
-            }
+            var perspective = getComputedStyle(this).perspective;
 
-            if (this.pivot) {
-                var firstEvent = this.eventStack[0];
-                var lastEvent = this.eventStack[this.eventStack.length - 1];
-
-                var deltaX = firstEvent !== undefined && lastEvent !== undefined ? (lastEvent.x - firstEvent.x) * -0.2 : 0;
-                var deltaY = firstEvent !== undefined && lastEvent !== undefined ? (lastEvent.y - firstEvent.y) * 0.2 : 0;
-
-                // apply deltas to the initial R of this interaction
-                this.currentR.yaw = this.initialR.yaw + deltaX;
-                this.currentR.pitch = constraint(this.initialR.pitch + deltaY, -90, 90); // constraint rotation arount X axis (yaw)
-
-                // apply current R to the pivot element
-                var perspective = parseInt(window.getComputedStyle(this).perspective);
-
-                this.pivot.style.transform = 'translateZ(' + perspective + 'px) rotateX(' + this.currentR.pitch + 'deg) rotateY(' + this.currentR.yaw + 'deg)';
-            }
+            this._pivot.style.transform = 'translateZ(' + perspective + ') rotateX(' + this.pitch + 'deg) rotateY(' + this.yaw + 'deg)';
 
             // recurse
-            this.refreshPointer = typeof requestAnimationFrame === 'function' ? requestAnimationFrame(this._refresh) : setTimeout(this._refresh, 1000 / 30);
+            this._refreshId = typeof requestAnimationFrame === 'function' ? requestAnimationFrame(this._refresh) : setTimeout(this._refresh, 1000 / 30);
         }
     }]);
 
@@ -228,39 +154,4 @@ var VZCubeElement = function (_HTMLElement) {
 }(HTMLElement);
 
 document.registerElement('vz-cube', VZCubeElement);
-
-// =====================================================
-//                        Polyfills
-// -----------------------------------------------------
-/**
- * @see https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill
- */
-if (typeof Object.assign != 'function') {
-    Object.assign = function (target, varArgs) {
-        // .length of function is 2
-        'use strict';
-
-        if (target == null) {
-            // TypeError if undefined or null
-            throw new TypeError('Cannot convert undefined or null to object');
-        }
-
-        var to = Object(target);
-
-        for (var index = 1; index < arguments.length; index++) {
-            var nextSource = arguments[index];
-
-            if (nextSource != null) {
-                // Skip over if undefined or null
-                for (var nextKey in nextSource) {
-                    // Avoid bugs when hasOwnProperty is shadowed
-                    if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
-                        to[nextKey] = nextSource[nextKey];
-                    }
-                }
-            }
-        }
-        return to;
-    };
-}
 //# sourceMappingURL=vz-cube.js.map
