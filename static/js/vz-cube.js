@@ -170,10 +170,9 @@ document.registerElement('vz-cube', VZCubeElement)
 
 class VZCubeFeature extends HTMLAnchorElement {
     createdCallback() {
-        this._yaw   = this.getAttribute('yaw')
-        this._pitch = this.getAttribute('pitch')
-
-        this._refresh = this._refresh.bind(this)
+        this._yaw       = this.getAttribute('yaw')
+        this._pitch     = this.getAttribute('pitch')
+        this._refresh   = this._refresh.bind(this)
     }
 
     attachedCallback() {
@@ -187,10 +186,12 @@ class VZCubeFeature extends HTMLAnchorElement {
             case 'pitch':
                 this._pitch = parseFloat(newVal) || 0; break
         }
+
+        this._refresh()
     }
 
     _refresh() {
-        this.style.transform = `rotateY(${-this.yaw}deg) rotateX(${this.pitch}deg) translateZ(50vmax - 1px)`
+        this.style.transform = `rotateY(${this.yaw}deg) rotateX(${this.pitch}deg) translateZ(calc(-50vmax + 1px))`
     }
 
     get yaw() {

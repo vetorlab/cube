@@ -76,7 +76,7 @@
         f2.addEventListener('click', e => {
             e.preventDefault()
 
-            cube.animateTo(20, -20, 1000, _ => {
+            cube.animateTo(-e.currentTarget.yaw, -e.currentTarget.pitch, 1000, _ => {
                 cube.freeze()
                 cube.zoomIn()
             })
