@@ -49,10 +49,10 @@ var VZCubeElement = function (_HTMLElement) {
             this.pivot = this.querySelector('vz-cubepivot'
 
             // styles
-            );this.style.cursor = 'move';
+            // this.style.cursor = 'move'
 
             // events
-            this._mouseDownListener = this._mouseDownListener.bind(this);
+            );this._mouseDownListener = this._mouseDownListener.bind(this);
             this._mouseUpListener = this._mouseUpListener.bind(this);
             this._mouseMoveListener = this._mouseMoveListener.bind(this);
             this._touchStartListener = this._touchStartListener.bind(this);

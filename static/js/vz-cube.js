@@ -22,7 +22,7 @@ class VZCubeElement extends HTMLElement {
         this.pivot = this.querySelector('vz-cubepivot')
 
         // styles
-        this.style.cursor = 'move'
+        // this.style.cursor = 'move'
 
         // events
         this._mouseDownListener = this._mouseDownListener.bind(this)

@@ -19,10 +19,6 @@ vz-cubeface {
     background-size: 100% 100%;
     background-repeat: no-repeat;
     backface-visibility: hidden;
-    display: none;
-}
-vz-cubeface {
-  display: block;
 }
 vz-cubeface[data-face=front] {
   transform: rotateY(90deg) translateX(calc(50% - 1px)) rotateY(-90deg);
@@ -41,4 +37,29 @@ vz-cubeface[data-face=bottom] {
 }
 vz-cubeface[data-face=back] {
   transform: rotateY(90deg) translateX(calc(-50% + 1px)) rotateY(90deg);
+}
+
+/*
+    Features
+*/
+a {
+    width: 2rem;
+    height: 2rem;
+    margin-top: -1rem;
+    margin-left: -1rem;
+    position: absolute;
+    top: 50%; left: 50%;
+    background: white;
+    border-radius: 50%;
+    opacity: .666;
+    transform: translateZ(calc(-50vmax + 1px));
+}
+a:nth-of-type(1) {
+    transform: rotateX(-10deg) rotateY(10deg) translateZ(calc(-50vmax + 1px));
+}
+a:nth-of-type(2) {
+    transform: rotateX(10deg) rotateY(-10deg) translateZ(calc(-50vmax + 1px));
+}
+a:nth-of-type(3) {
+    transform: translateZ(calc(-50vmax + 1px));
 }
