@@ -76,6 +76,7 @@ var VZCubeElement = function (_HTMLElement) {
         key: 'detachedCallback',
         value: function detachedCallback() {
             typeof cancelAnimationFrame === 'function' ? cancelAnimationFrame(this._refreshId) : clearTimeout(this._refreshId);
+
             this._removeEventHandlers();
         }
     }, {
@@ -100,6 +101,16 @@ var VZCubeElement = function (_HTMLElement) {
         key: 'unfreeze',
         value: function unfreeze() {
             this._isFrozen = false;
+        }
+    }, {
+        key: 'zoomIn',
+        value: function zoomIn() {
+            this.setAttribute('zoom', true);
+        }
+    }, {
+        key: 'zoomOut',
+        value: function zoomOut() {
+            this.removeAttribute('zoom');
         }
     }, {
         key: '_easing',
@@ -173,6 +184,8 @@ var VZCubeElement = function (_HTMLElement) {
     }, {
         key: '_processAnimation',
         value: function _processAnimation() {
+            var _this2 = this;
+
             if (!this._isAnimating) return;
 
             var now = Date.now();
@@ -187,7 +200,9 @@ var VZCubeElement = function (_HTMLElement) {
                 this.pitch = this._animationEndPos.pitch;
 
                 if (typeof this._animationEndCallback === 'function') {
-                    this._animationEndCallback.call(this);
+                    requestAnimationFrame(function (_) {
+                        return _this2._animationEndCallback.call(_this2);
+                    });
                 }
             }
         }
@@ -209,4 +224,61 @@ var VZCubeElement = function (_HTMLElement) {
 }(HTMLElement);
 
 document.registerElement('vz-cube', VZCubeElement);
+
+var VZCubeFeature = function (_HTMLAnchorElement) {
+    _inherits(VZCubeFeature, _HTMLAnchorElement);
+
+    function VZCubeFeature() {
+        _classCallCheck(this, VZCubeFeature);
+
+        return _possibleConstructorReturn(this, (VZCubeFeature.__proto__ || Object.getPrototypeOf(VZCubeFeature)).apply(this, arguments));
+    }
+
+    _createClass(VZCubeFeature, [{
+        key: 'createdCallback',
+        value: function createdCallback() {
+            this._yaw = this.getAttribute('yaw');
+            this._pitch = this.getAttribute('pitch');
+
+            this._refresh = this._refresh.bind(this);
+        }
+    }, {
+        key: 'attachedCallback',
+        value: function attachedCallback() {
+            this._refresh();
+        }
+    }, {
+        key: 'attributeChangedCallback',
+        value: function attributeChangedCallback(attrName, oldVal, newVal) {
+            switch (attrName) {
+                case 'yaw':
+                    this._yaw = parseFloat(newVal) || 0;break;
+                case 'pitch':
+                    this._pitch = parseFloat(newVal) || 0;break;
+            }
+        }
+    }, {
+        key: '_refresh',
+        value: function _refresh() {
+            this.style.transform = 'rotateY(' + -this.yaw + 'deg) rotateX(' + this.pitch + 'deg) translateZ(50vmax - 1px)';
+        }
+    }, {
+        key: 'yaw',
+        get: function get() {
+            return this._yaw;
+        }
+    }, {
+        key: 'pitch',
+        get: function get() {
+            return this._pitch;
+        }
+    }]);
+
+    return VZCubeFeature;
+}(HTMLAnchorElement);
+
+document.registerElement('vz-cube-feature', {
+    prototype: VZCubeFeature.prototype,
+    extends: 'a'
+});
 //# sourceMappingURL=vz-cube.js.map

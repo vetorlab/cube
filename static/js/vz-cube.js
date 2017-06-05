@@ -42,6 +42,7 @@ class VZCubeElement extends HTMLElement {
         typeof cancelAnimationFrame === 'function'
             ? cancelAnimationFrame(this._refreshId)
             : clearTimeout(this._refreshId)
+
         this._removeEventHandlers()
     }
 
@@ -60,6 +61,13 @@ class VZCubeElement extends HTMLElement {
 
     unfreeze() {
         this._isFrozen = false
+    }
+
+    zoomIn() {
+        this.setAttribute('zoom', true)
+    }
+    zoomOut() {
+        this.removeAttribute('zoom')
     }
 
     _easing(t) {
@@ -137,7 +145,7 @@ class VZCubeElement extends HTMLElement {
             this.pitch          = this._animationEndPos.pitch
 
             if (typeof this._animationEndCallback === 'function') {
-                this._animationEndCallback.call(this)
+                requestAnimationFrame(_ => this._animationEndCallback.call(this))
             }
         }
     }
@@ -157,3 +165,42 @@ class VZCubeElement extends HTMLElement {
 }
 
 document.registerElement('vz-cube', VZCubeElement)
+
+
+
+class VZCubeFeature extends HTMLAnchorElement {
+    createdCallback() {
+        this._yaw   = this.getAttribute('yaw')
+        this._pitch = this.getAttribute('pitch')
+
+        this._refresh = this._refresh.bind(this)
+    }
+
+    attachedCallback() {
+        this._refresh()
+    }
+
+    attributeChangedCallback(attrName, oldVal, newVal) {
+        switch (attrName) {
+            case 'yaw':
+                this._yaw = parseFloat(newVal) || 0; break
+            case 'pitch':
+                this._pitch = parseFloat(newVal) || 0; break
+        }
+    }
+
+    _refresh() {
+        this.style.transform = `rotateY(${-this.yaw}deg) rotateX(${this.pitch}deg) translateZ(50vmax - 1px)`
+    }
+
+    get yaw() {
+        return this._yaw
+    }
+    get pitch() {
+        return this._pitch
+    }
+}
+document.registerElement('vz-cube-feature', {
+    prototype: VZCubeFeature.prototype,
+    extends: 'a'
+});

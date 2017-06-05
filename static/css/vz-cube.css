@@ -7,6 +7,9 @@ vz-cube {
     perspective: 40vmax;
     transition: 500ms perspective ease-in-out;
 }
+vz-cube[zoom] {
+    perspective: 60vmax;
+}
 vz-cubepivot {
     position: relative;
     width: 100%; height: 100%;
@@ -54,13 +57,4 @@ a {
     opacity: .666;
     transform: translateZ(calc(-50vmax + 1px));
     cursor: pointer;
-}
-a:nth-of-type(1) {
-    transform: rotateX(-10deg) rotateY(10deg) translateZ(calc(-50vmax + 1px));
-}
-a:nth-of-type(2) {
-    transform: rotateX(10deg) rotateY(-10deg) translateZ(calc(-50vmax + 1px));
-}
-a:nth-of-type(3) {
-    transform: translateZ(calc(-50vmax + 1px));
 }
