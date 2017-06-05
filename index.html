@@ -58,9 +58,9 @@
                     <vz-cubeface data-face="left" style="background-image: url(static/images/cubes/02/left.jpg)"></vz-cubeface>
                     <vz-cubeface data-face="right" style="background-image: url(static/images/cubes/02/right.jpg)"></vz-cubeface>
 
-                    <a is="vz-cube-feature" title="Feature 1"></a>
-                    <a is="vz-cube-feature" title="Feature 2"></a>
-                    <a is="vz-cube-feature" title="Feature 1"></a>
+                    <a is="vz-cube-feature" title="Feature 1" yaw="10" pitch="0" onclick="cube.animateTo(this.yaw, this.pitch)"></a>
+                    <a is="vz-cube-feature" title="Feature 2" yaw="10" pitch="20" onclick="cube.animateTo(this.yaw, this.pitch)"></a>
+                    <a is="vz-cube-feature" title="Feature 3" yaw="40" pitch="30" onclick="cube.animateTo(this.yaw, this.pitch)"></a>
                 </vz-cubepivot>
             </vz-cube>
         </section>

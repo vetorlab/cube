@@ -86,7 +86,7 @@ var VZCubeElement = function (_HTMLElement) {
 
             this._isAnimating = true;
             this._animationStartPos = { yaw: this.yaw, pitch: this.pitch };
-            this._animationEndPos = { yaw: yaw, pitch: pitch };
+            this._animationEndPos = { yaw: parseFloat(yaw) || 0, pitch: parseFloat(pitch) || 0 };
             this._animationStartTime = Date.now();
             this._animationEndTime = Date.now() + duration;
             this._animationEndCallback = callback;
