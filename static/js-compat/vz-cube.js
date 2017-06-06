@@ -205,9 +205,17 @@ var VZCubeElement = function (_HTMLElement) {
             }
         }
     }, {
+        key: '_normalize',
+        value: function _normalize() {
+            this.pitch = constraint(this.pitch, -70, 70);
+            if (this.yaw > 180) this.yaw -= 360;
+            if (this.yaw < -180) this.yaw += 360;
+        }
+    }, {
         key: '_refresh',
         value: function _refresh() {
             this._processAnimation();
+            this._normalize();
 
             var perspective = getComputedStyle(this).perspective;
 

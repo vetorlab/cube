@@ -155,8 +155,15 @@ class VZCubeElement extends HTMLElement {
         }
     }
 
+    _normalize() {
+        this.pitch = constraint(this.pitch, -70, 70)
+        if (this.yaw > 180) this.yaw -= 360
+        if (this.yaw < -180) this.yaw += 360
+    }
+
     _refresh() {
         this._processAnimation()
+        this._normalize()
 
         const perspective = getComputedStyle(this).perspective
 
