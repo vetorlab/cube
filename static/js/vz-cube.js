@@ -1,4 +1,5 @@
 /** @see https://github.com/processing/p5.js/blob/master/src/math/calculation.js */
+
 function map(n, start1, stop1, start2 = 0, stop2 = 1) {
     return ((n - start1) / (stop1 - start1)) * (stop2 - start2) + start2
 }
@@ -10,9 +11,6 @@ function head(ls) { return ls[0] }
 function tail(ls) { return ls.slice(1) }
 function init(ls) { return ls.slice(0, -1) }
 function last(ls) { return ls[ls.length - 1] }
-
-
-
 
 class VZCubeElement extends HTMLElement {
     constructor() {
@@ -52,6 +50,14 @@ class VZCubeElement extends HTMLElement {
     }
 
     animateTo(yaw, pitch, duration = 1000, callback = null) {
+        // set yaw to the neares yaw
+        const altYaw = yaw > 0
+            ? yaw - 360
+            : yaw + 360
+        if (Math.abs(altYaw - this.yaw) < Math.abs(yaw - this.yaw)) {
+            yaw = altYaw
+        }
+
         this._isAnimating = true
         this._animationStartPos     = { yaw: this.yaw, pitch: this.pitch }
         this._animationEndPos       = { yaw: parseFloat(yaw) || 0, pitch: parseFloat(pitch) || 0 }
@@ -148,6 +154,8 @@ class VZCubeElement extends HTMLElement {
             this._isAnimating   = false
             this.yaw            = this._animationEndPos.yaw
             this.pitch          = this._animationEndPos.pitch
+
+            // @TODO normalize
 
             if (typeof this._animationEndCallback === 'function') {
                 requestAnimationFrame(_ => this._animationEndCallback.call(this))
