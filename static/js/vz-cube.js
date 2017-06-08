@@ -118,8 +118,6 @@ class VZCubeElement extends HTMLElement {
     }
 
     _handleTouchStart(e) {
-        e.preventDefault();
-        
         this._isDragging = true
         this._lastDragEvent = e.touches[0]
     }
