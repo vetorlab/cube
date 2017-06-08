@@ -35,7 +35,7 @@
         <link rel="import" href="static/webcomponents/vz-cube.html">
     </head>
     <body>
-        <!-- <section>
+        <section>
             <vz-cube>
                 <vz-cubepivot>
                     <vz-cubeface data-face="top" style="background-image: url(static/images/cubes/01/top.jpg)"></vz-cubeface>
@@ -46,7 +46,7 @@
                     <vz-cubeface data-face="right" style="background-image: url(static/images/cubes/01/right.jpg)"></vz-cubeface>
                 </vz-cubepivot>
             </vz-cube>
-        </section> -->
+        </section>
 
         <section>
             <vz-cube id="cube">
@@ -79,6 +79,12 @@
             cube.animateTo(-e.currentTarget.yaw, -e.currentTarget.pitch, 1000, _ => {
                 cube.freeze()
                 cube.zoomIn()
+            })
+        })
+
+        document.querySelectorAll('vz-cube').forEach(c => {
+            c.addEventListener('touchmove', e => {
+                if (-70 < c.pitch && c.pitch < 70) e.preventDefault()
             })
         })
         </script>
