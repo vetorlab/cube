@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## 4.0.0 (2017-06-19)
+
+### Changed
+- Move build to Webpack
+
+
 ## 3.2.0
 
 ### Changed
