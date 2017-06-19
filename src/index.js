@@ -1,3 +1,6 @@
+import './vz-cube.css'
+
+
 /** @see https://github.com/processing/p5.js/blob/master/src/math/calculation.js */
 
 function map(n, start1, stop1, start2 = 0, stop2 = 1) {
