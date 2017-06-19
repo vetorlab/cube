@@ -1,19 +1,10 @@
 import './vz-cube.css'
-
+import DeviceOrientationManager from './classes/DeviceOrientationManager'
+import { map, constraint } from './utils/math'
 
 /** @see https://github.com/processing/p5.js/blob/master/src/math/calculation.js */
 
-function map(n, start1, stop1, start2 = 0, stop2 = 1) {
-    return ((n - start1) / (stop1 - start1)) * (stop2 - start2) + start2
-}
-function constraint(n, min = 0, max = 1) {
-    return Math.min(Math.max(n, min), max)
-}
 
-function head(ls) { return ls[0] }
-function tail(ls) { return ls.slice(1) }
-function init(ls) { return ls.slice(0, -1) }
-function last(ls) { return ls[ls.length - 1] }
 
 
 
@@ -92,15 +83,19 @@ class VZCubeElement extends HTMLElement {
         this._handleTouchStart  = this._handleTouchStart.bind(this)
         this._handleTouchMove   = this._handleTouchMove.bind(this)
         this._handleTouchEnd    = this._handleTouchEnd.bind(this)
-        this._handleOrientation = this._handleOrientation.bind(this)
         this._processAnimation  = this._processAnimation.bind(this)
         this._refresh           = this._refresh.bind(this)
+
+        this.deviceOrientationManager = new DeviceOrientationManager(this)
     }
 
     connectedCallback() {
         this._pivot = this.querySelector('vz-cubepivot')
         this._addEventHandlers()
         this._refresh()
+        
+        if (this.deviceOrientationManager !== undefined)
+            this.deviceOrientationManager.init()
     }
 
     disconnectedCallback() {
@@ -109,6 +104,9 @@ class VZCubeElement extends HTMLElement {
             : clearTimeout(this._refreshId)
 
         this._removeEventHandlers()
+
+        if (this.deviceOrientationManager !== undefined)
+            this.deviceOrientationManager.deinit()
     }
 
     animateTo(yaw, pitch, duration = 1000, callback = null) {
@@ -155,7 +153,6 @@ class VZCubeElement extends HTMLElement {
         this.addEventListener('touchmove', this._handleTouchMove)
         this.addEventListener('touchend', this._handleTouchEnd)
         this.addEventListener('touchcancel', this._handleTouchEnd)
-        window.addEventListener('deviceorientation', this._handleOrientation)
     }
 
     _removeEventHandlers() {
@@ -166,7 +163,6 @@ class VZCubeElement extends HTMLElement {
         this.removeEventListener('touchmove', this._handleTouchMove)
         this.removeEventListener('touchend', this._handleTouchEnd)
         this.removeEventListener('touchcancel', this._handleTouchEnd)
-        window.removeEventListener('deviceorientation', this._handleOrientation)
     }
 
     _handleMouseDown(e) {
@@ -204,22 +200,6 @@ class VZCubeElement extends HTMLElement {
     _handleTouchEnd(e) {
         this._isDragging = false
     }
-
-    _handleOrientation(e) {
-        const currentOrientation = getOrientation(e)
-
-        if (this._lastOrientation !== undefined) {
-            console.log()
-
-            // console.log(this._lastOrientation.y, currentOrientation.y)
-            this.yaw     -= (this._lastOrientation.y - currentOrientation.y) || 0
-            this.pitch   -= (this._lastOrientation.x - currentOrientation.x) || 0
-        }
-        
-
-        this._lastOrientation = currentOrientation
-    }
-
 
     _processAnimation() {
         if (!this._isAnimating) return
