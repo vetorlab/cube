@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## 3.2.0
+
+### Changed
+- Normalize yaw when animating near the edges
+
+
 ## 3.1.1
 
 ### Changed

@@ -1,6 +1,6 @@
 {
   "name": "vz-cube",
-  "version": "3.1.2",
+  "version": "3.2.0",
   "description": "A dummy project for testing a cubeface script",
   "main": "index.html",
   "dependencies": {},

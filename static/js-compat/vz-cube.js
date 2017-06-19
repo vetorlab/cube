@@ -9,6 +9,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /** @see https://github.com/processing/p5.js/blob/master/src/math/calculation.js */
+
 function map(n, start1, stop1) {
     var start2 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
     var stop2 = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 1;
@@ -82,6 +83,12 @@ var VZCubeElement = function (_HTMLElement) {
         value: function animateTo(yaw, pitch) {
             var duration = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1000;
             var callback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+
+            // set yaw to the neares yaw
+            var altYaw = yaw > 0 ? yaw - 360 : yaw + 360;
+            if (Math.abs(altYaw - this.yaw) < Math.abs(yaw - this.yaw)) {
+                yaw = altYaw;
+            }
 
             this._isAnimating = true;
             this._animationStartPos = { yaw: this.yaw, pitch: this.pitch };
@@ -196,6 +203,8 @@ var VZCubeElement = function (_HTMLElement) {
                 this._isAnimating = false;
                 this.yaw = this._animationEndPos.yaw;
                 this.pitch = this._animationEndPos.pitch;
+
+                // @TODO normalize
 
                 if (typeof this._animationEndCallback === 'function') {
                     requestAnimationFrame(function (_) {

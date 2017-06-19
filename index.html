@@ -58,9 +58,18 @@
                     <vz-cubeface data-face="left" style="background-image: url(static/images/cubes/02/left.jpg)"></vz-cubeface>
                     <vz-cubeface data-face="right" style="background-image: url(static/images/cubes/02/right.jpg)"></vz-cubeface>
 
-                    <vz-cube-feature is="vz-cube-feature" id="f1" title="Feature 1" yaw="0" pitch="0"></vz-cube-feature>
-                    <vz-cube-feature is="vz-cube-feature" id="f2" title="Feature 2" yaw="20" pitch="20"></vz-cube-feature>
-                    <!-- <a is="vz-cube-feature" id="f3" title="Feature 3 (Instantâneo)" yaw="0" pitch="20" onclick="cube.animateTo(-this.yaw, -this.pitch, 0, _ => alert('Cheguei no 3'))"></a> -->
+                    <vz-cube-feature id="f1" title="Feature 1" yaw="0" pitch="0"></vz-cube-feature>
+                    <vz-cube-feature id="f2" title="Feature 2" yaw="20" pitch="20"></vz-cube-feature>
+
+                    <vz-cube-feature class="ping-pong-on-the-back" title="Right"
+                        yaw="165" pitch="0"></vz-cube-feature>
+                    <vz-cube-feature class="ping-pong-on-the-back" title="Left"
+                        yaw="-165" pitch="0"></vz-cube-feature>
+                    <vz-cube-feature class="ping-pong-on-the-back" title="Right"
+                        yaw="10" pitch="0"></vz-cube-feature>
+                    <vz-cube-feature class="ping-pong-on-the-back" title="Left"
+                        yaw="-10" pitch="0"></vz-cube-feature>
+
                 </vz-cubepivot>
             </vz-cube>
         </section>
@@ -79,6 +88,12 @@
             cube.animateTo(-e.currentTarget.yaw, -e.currentTarget.pitch, 1000, _ => {
                 cube.freeze()
                 cube.zoomIn()
+            })
+        })
+
+        document.querySelectorAll('.ping-pong-on-the-back').forEach(c => {
+            c.addEventListener('click', e => {
+                cube.animateTo(-e.currentTarget.yaw, -e.currentTarget.pitch, 500)
             })
         })
         </script>
