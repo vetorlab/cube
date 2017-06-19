@@ -2,11 +2,11 @@
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /** @see https://github.com/processing/p5.js/blob/master/src/math/calculation.js */
 
@@ -36,27 +36,66 @@ function last(ls) {
     return ls[ls.length - 1];
 }
 
-var Orientation = function () {
-    function Orientation(e) {
-        _classCallCheck(this, Orientation);
+var realOrientation = void 0,
+    lastGamma = void 0,
+    rotation3d = void 0,
+    verticalY = void 0;
+var getOrientation = function getOrientation(e) {
+    var rotation3d = {};
 
-        this.alpha = e.alpha;
-        this.beta = e.beta;
-        this.gamma = e.gamma;
+    if (realOrientation == null) {
+        realOrientation = window.orientation;
+    }
+    if (lastGamma == null) {
+        lastGamma = e.gamma;
     }
 
-    _createClass(Orientation, [{
-        key: 'diff',
-        value: function diff(l) {
-            return {
-                yaw: l.alpha - this.alpha,
-                pitch: this.beta - l.beta
-            };
+    if (Math.abs(e.gamma) < 10) {
+        if (lastGamma * e.gamma < 0) {
+            realOrientation = -realOrientation;
+            lastGamma = e.gamma;
         }
-    }]);
+    } else {
+        if (lastGamma * e.gamma < 0) {
+            lastGamma = e.gamma;
+        }
+    }
 
-    return Orientation;
-}();
+    if (realOrientation == 90) {
+        if (e.gamma < 0) {
+            rotation3d.x = -90 - e.gamma;
+            rotation3d.y = -e.alpha;
+        } else {
+            rotation3d.x = 90 - e.gamma;
+            rotation3d.y = 180 - e.alpha;
+        }
+    } else if (realOrientation == -90) {
+        if (e.gamma < 0) {
+            rotation3d.x = 90 + e.gamma;
+            rotation3d.y = -e.alpha;
+        } else {
+            rotation3d.x = -90 + e.gamma;
+            rotation3d.y = 180 - e.alpha;
+        }
+    } else if (realOrientation == 0) {
+        rotation3d.x = e.beta - 90;
+        if (verticalY != null) {
+            var newY = 180 - e.alpha;
+            if (Math.abs(verticalY - newY) < 10) {
+                rotation3d.y = 180 - e.alpha;
+            }
+        }
+        verticalY = 180 - e.alpha;
+    } else {
+        rotation3d.x = e.beta - 90;
+        rotation3d.y = 180 - e.alpha;
+    }
+    if (realOrientation != window.orientation) {
+        rotation3d.y = 180 + rotation3d.y;
+    }
+
+    return rotation3d;
+};
 
 var VZCubeElement = function (_HTMLElement) {
     _inherits(VZCubeElement, _HTMLElement);
@@ -214,11 +253,14 @@ var VZCubeElement = function (_HTMLElement) {
     }, {
         key: '_handleOrientation',
         value: function _handleOrientation(e) {
-            var currentOrientation = new Orientation(e);
+            var currentOrientation = getOrientation(e);
 
             if (this._lastOrientation !== undefined) {
-                this.yaw += currentOrientation.diff(this._lastOrientation).yaw;
-                this.pitch += currentOrientation.diff(this._lastOrientation).pitch;
+                console.log();
+
+                // console.log(this._lastOrientation.y, currentOrientation.y)
+                this.yaw -= this._lastOrientation.y - currentOrientation.y || 0;
+                this.pitch -= this._lastOrientation.x - currentOrientation.x || 0;
             }
 
             this._lastOrientation = currentOrientation;

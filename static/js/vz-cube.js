@@ -12,19 +12,61 @@ function tail(ls) { return ls.slice(1) }
 function init(ls) { return ls.slice(0, -1) }
 function last(ls) { return ls[ls.length - 1] }
 
-class Orientation {
-    constructor (e) {
-        this.alpha  = e.alpha
-        this.beta   = e.beta
-        this.gamma  = e.gamma
-    }
 
-    diff (l) {
-        return {
-            yaw:    l.alpha - this.alpha,
-            pitch:  this.beta - l.beta,
+
+let realOrientation, lastGamma, rotation3d, verticalY
+const getOrientation = e => {
+    let rotation3d = {}
+
+    if (realOrientation == null) { realOrientation = window.orientation; }
+    if (lastGamma == null) { lastGamma = e.gamma; }
+
+    if (Math.abs(e.gamma) < 10) {
+        if (lastGamma * e.gamma < 0) {
+            realOrientation = -realOrientation;
+            lastGamma = e.gamma;
+        }
+    } else {
+        if (lastGamma * e.gamma < 0) {
+            lastGamma = e.gamma;
         }
     }
+
+
+    if (realOrientation == 90) {
+        if (e.gamma < 0) {
+            rotation3d.x = -90 - e.gamma;
+            rotation3d.y = -e.alpha;
+        } else {
+            rotation3d.x = 90 - e.gamma;
+            rotation3d.y = 180 - e.alpha;
+        }
+    } else if (realOrientation == -90) {
+        if (e.gamma < 0) {
+            rotation3d.x = 90 + e.gamma;
+            rotation3d.y = -e.alpha;
+        } else {
+            rotation3d.x = -90 + e.gamma;
+            rotation3d.y = 180 - e.alpha;
+        }
+    } else if (realOrientation == 0) {
+        rotation3d.x = e.beta - 90;
+        if (verticalY != null) {
+            var newY = 180 - e.alpha
+            if (Math.abs(verticalY - newY) < 10) {
+                rotation3d.y = 180 - e.alpha;
+            }
+        }
+        verticalY = 180 - e.alpha;
+    } else {
+        rotation3d.x = e.beta - 90;
+        rotation3d.y = 180 - e.alpha;
+    }
+    if (realOrientation != window.orientation) {
+        rotation3d.y = 180 + rotation3d.y;
+    }
+
+    return rotation3d
 }
 
 
@@ -161,12 +203,16 @@ class VZCubeElement extends HTMLElement {
     }
 
     _handleOrientation(e) {
-        const currentOrientation = new Orientation(e)
+        const currentOrientation = getOrientation(e)
 
         if (this._lastOrientation !== undefined) {
-            this.yaw    += currentOrientation.diff(this._lastOrientation).yaw
-            this.pitch  += currentOrientation.diff(this._lastOrientation).pitch
+            console.log()
+
+            // console.log(this._lastOrientation.y, currentOrientation.y)
+            this.yaw     -= (this._lastOrientation.y - currentOrientation.y) || 0
+            this.pitch   -= (this._lastOrientation.x - currentOrientation.x) || 0
         }
+        
 
         this._lastOrientation = currentOrientation
     }
