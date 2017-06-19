@@ -12,6 +12,22 @@ function tail(ls) { return ls.slice(1) }
 function init(ls) { return ls.slice(0, -1) }
 function last(ls) { return ls[ls.length - 1] }
 
+class Orientation {
+    constructor (e) {
+        this.alpha  = e.alpha
+        this.beta   = e.beta
+        this.gamma  = e.gamma
+    }
+
+    diff (l) {
+        return {
+            yaw:    l.alpha - this.alpha,
+            pitch:  this.beta - l.beta,
+        }
+    }
+}
+
+
 class VZCubeElement extends HTMLElement {
     constructor() {
         super()
@@ -31,6 +47,7 @@ class VZCubeElement extends HTMLElement {
         this._handleTouchStart  = this._handleTouchStart.bind(this)
         this._handleTouchMove   = this._handleTouchMove.bind(this)
         this._handleTouchEnd    = this._handleTouchEnd.bind(this)
+        this._handleOrientation = this._handleOrientation.bind(this)
         this._processAnimation  = this._processAnimation.bind(this)
         this._refresh           = this._refresh.bind(this)
     }
@@ -93,6 +110,7 @@ class VZCubeElement extends HTMLElement {
         this.addEventListener('touchmove', this._handleTouchMove)
         this.addEventListener('touchend', this._handleTouchEnd)
         this.addEventListener('touchcancel', this._handleTouchEnd)
+        window.addEventListener('deviceorientation', this._handleOrientation)
     }
 
     _removeEventHandlers() {
@@ -103,6 +121,7 @@ class VZCubeElement extends HTMLElement {
         this.removeEventListener('touchmove', this._handleTouchMove)
         this.removeEventListener('touchend', this._handleTouchEnd)
         this.removeEventListener('touchcancel', this._handleTouchEnd)
+        window.removeEventListener('deviceorientation', this._handleOrientation)
     }
 
     _handleMouseDown(e) {
@@ -140,6 +159,18 @@ class VZCubeElement extends HTMLElement {
     _handleTouchEnd(e) {
         this._isDragging = false
     }
+
+    _handleOrientation(e) {
+        const currentOrientation = new Orientation(e)
+
+        if (this._lastOrientation !== undefined) {
+            this.yaw    += currentOrientation.diff(this._lastOrientation).yaw
+            this.pitch  += currentOrientation.diff(this._lastOrientation).pitch
+        }
+
+        this._lastOrientation = currentOrientation
+    }
+
 
     _processAnimation() {
         if (!this._isAnimating) return

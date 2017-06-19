@@ -2,11 +2,11 @@
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /** @see https://github.com/processing/p5.js/blob/master/src/math/calculation.js */
 
@@ -36,6 +36,28 @@ function last(ls) {
     return ls[ls.length - 1];
 }
 
+var Orientation = function () {
+    function Orientation(e) {
+        _classCallCheck(this, Orientation);
+
+        this.alpha = e.alpha;
+        this.beta = e.beta;
+        this.gamma = e.gamma;
+    }
+
+    _createClass(Orientation, [{
+        key: 'diff',
+        value: function diff(l) {
+            return {
+                yaw: l.alpha - this.alpha,
+                pitch: this.beta - l.beta
+            };
+        }
+    }]);
+
+    return Orientation;
+}();
+
 var VZCubeElement = function (_HTMLElement) {
     _inherits(VZCubeElement, _HTMLElement);
 
@@ -59,6 +81,7 @@ var VZCubeElement = function (_HTMLElement) {
         _this._handleTouchStart = _this._handleTouchStart.bind(_this);
         _this._handleTouchMove = _this._handleTouchMove.bind(_this);
         _this._handleTouchEnd = _this._handleTouchEnd.bind(_this);
+        _this._handleOrientation = _this._handleOrientation.bind(_this);
         _this._processAnimation = _this._processAnimation.bind(_this);
         _this._refresh = _this._refresh.bind(_this);
         return _this;
@@ -132,6 +155,7 @@ var VZCubeElement = function (_HTMLElement) {
             this.addEventListener('touchmove', this._handleTouchMove);
             this.addEventListener('touchend', this._handleTouchEnd);
             this.addEventListener('touchcancel', this._handleTouchEnd);
+            window.addEventListener('deviceorientation', this._handleOrientation);
         }
     }, {
         key: '_removeEventHandlers',
@@ -143,6 +167,7 @@ var VZCubeElement = function (_HTMLElement) {
             this.removeEventListener('touchmove', this._handleTouchMove);
             this.removeEventListener('touchend', this._handleTouchEnd);
             this.removeEventListener('touchcancel', this._handleTouchEnd);
+            window.removeEventListener('deviceorientation', this._handleOrientation);
         }
     }, {
         key: '_handleMouseDown',
@@ -185,6 +210,18 @@ var VZCubeElement = function (_HTMLElement) {
         key: '_handleTouchEnd',
         value: function _handleTouchEnd(e) {
             this._isDragging = false;
+        }
+    }, {
+        key: '_handleOrientation',
+        value: function _handleOrientation(e) {
+            var currentOrientation = new Orientation(e);
+
+            if (this._lastOrientation !== undefined) {
+                this.yaw += currentOrientation.diff(this._lastOrientation).yaw;
+                this.pitch += currentOrientation.diff(this._lastOrientation).pitch;
+            }
+
+            this._lastOrientation = currentOrientation;
         }
     }, {
         key: '_processAnimation',
