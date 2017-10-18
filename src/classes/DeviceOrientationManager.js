@@ -21,8 +21,15 @@ export default class DeviceOrientationManager {
 
         // @FIXME s/x/y/g s/y/x/g
         if (prev !== undefined) {
-            this.cube.yaw   -= curr.x - prev.x
-            this.cube.pitch += curr.y - prev.y
+            var difX = curr.x - prev.x
+            var difY = curr.y - prev.y
+            if ( Math.abs(difY) > 90 ){
+                difX = 0
+                difY = 0
+            }
+            this.cube.yaw   += difX
+            this.cube.pitch  +=difY
+            // this.cube.roll    += curr.z - prev.z
         }
         
         this._previousOrientation =  curr
@@ -30,37 +37,30 @@ export default class DeviceOrientationManager {
 
     _getOrientation ({ alpha, beta, gamma }) {
         const orientation = window.orientation || 0
-        // VAI TE QUE USA QUARTENIO CACETE
 
-        
-        // console.log(orientation, alpha, beta, gamma)
+        var r = {
+            x: -(alpha + gamma),
+            y: beta,
+        }
 
         switch (orientation) {
-            case 0:
-                // portrait (native)
-                // @FIXME (little jump around beta 90)
-                return {
-                    x: alpha + gamma,
-                    y: beta,
-                }
             case 90:
                 // landscape (left)
-                if (gamma < 0)
-                    return {
-                        x: -90 - gamma,
-                        y: -alpha,
-                    }
-			    else
-                    return {
-                        x: 90 - gamma,
-                        y: 180 - alpha,
-                    }
+                r = {
+                    x: 90 - (alpha + beta),
+                    y: -gamma,
+                }
+                break;
             case -90:
-                // landscape (right)
+                r = {
+                    x: 90 - (alpha + beta),
+                    y: gamma,
+                }
+                break;
             case 180:
                 // portrait (upside-down)
         }
 
-
+        return r;
     }
 }
