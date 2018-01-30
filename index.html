@@ -63,14 +63,10 @@
                     <vz-cube-feature id="f1" title="Feature 1" yaw="0" pitch="0"></vz-cube-feature>
                     <vz-cube-feature id="f2" title="Feature 2" yaw="20" pitch="20"></vz-cube-feature>
 
-                    <vz-cube-feature class="ping-pong-on-the-back" title="Right"
-                        yaw="165" pitch="0"></vz-cube-feature>
-                    <vz-cube-feature class="ping-pong-on-the-back" title="Left"
-                        yaw="-165" pitch="0"></vz-cube-feature>
-                    <vz-cube-feature class="ping-pong-on-the-back" title="Right"
-                        yaw="10" pitch="0"></vz-cube-feature>
-                    <vz-cube-feature class="ping-pong-on-the-back" title="Left"
-                        yaw="-10" pitch="0"></vz-cube-feature>
+                    <vz-cube-feature class="ping-pong-on-the-back" title="Right" yaw="165" pitch="0"></vz-cube-feature>
+                    <vz-cube-feature class="ping-pong-on-the-back" title="Left" yaw="-165" pitch="0"></vz-cube-feature>
+                    <vz-cube-feature class="ping-pong-on-the-back" title="Right" yaw="10" pitch="0"></vz-cube-feature>
+                    <vz-cube-feature class="ping-pong-on-the-back" title="Left" yaw="-10" pitch="0"></vz-cube-feature>
 
                 </vz-cubepivot>
             </vz-cube>
@@ -86,7 +82,6 @@
 
         f2.addEventListener('click', e => {
             e.preventDefault()
-
             cube.animateTo(-e.currentTarget.yaw, -e.currentTarget.pitch, 1000, _ => {
                 cube.freeze()
                 cube.zoomIn()
