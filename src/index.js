@@ -76,6 +76,7 @@ class VZCubeElement extends HTMLElement {
 
         this.yaw    = 0
         this.pitch  = 0
+        this.roll  = 0
 
         this._handleMouseDown   = this._handleMouseDown.bind(this)
         this._handleMouseMove   = this._handleMouseMove.bind(this)
@@ -184,11 +185,17 @@ class VZCubeElement extends HTMLElement {
     }
 
     _handleTouchStart(e) {
+        if ( Math.abs(this.pitch) < 69 ){
+            e.preventDefault()
+        }
         this._isDragging = true
         this._lastDragEvent = e.touches[0]
     }
 
     _handleTouchMove(e) {
+        if ( Math.abs(this.pitch) < 69 ){
+            e.preventDefault()
+        }
         if (!this._isDragging || this._isAnimating || this._isFrozen) return
 
         this.yaw    += (this._lastDragEvent.pageX - e.touches[0].pageX) * this._draggingMultiplier
@@ -198,6 +205,9 @@ class VZCubeElement extends HTMLElement {
     }
 
     _handleTouchEnd(e) {
+        if ( Math.abs(this.pitch) < 69 ){
+            e.preventDefault()
+        }
         this._isDragging = false
     }
 
@@ -227,6 +237,7 @@ class VZCubeElement extends HTMLElement {
         this.pitch = constraint(this.pitch, -70, 70)
         if (this.yaw > 180) this.yaw -= 360
         if (this.yaw < -180) this.yaw += 360
+        if (this.roll < -180) this.roll += 360
     }
 
     _refresh() {
@@ -235,7 +246,7 @@ class VZCubeElement extends HTMLElement {
 
         const perspective = getComputedStyle(this).perspective
 
-        this._pivot.style.transform = `translateZ(${perspective}) rotateX(${this.pitch}deg) rotateY(${this.yaw}deg)`
+        this._pivot.style.transform = `translateZ(${perspective}) rotateZ(${this.roll}deg) rotateX(${this.pitch}deg) rotateY(${this.yaw}deg)`
 
         // recurse
         this._refreshId = typeof requestAnimationFrame === 'function'
