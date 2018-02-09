@@ -1,4 +1,4 @@
-export default class DeviceOrientationManager {
+class DeviceOrientationManager {
     constructor (cube) {
         this.cube = cube
         this.orientation = window.orientation || 0
@@ -64,3 +64,5 @@ export default class DeviceOrientationManager {
         return r;
     }
 }
+
+export default DeviceOrientationManager
