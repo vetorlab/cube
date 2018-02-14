@@ -28,8 +28,10 @@ class Cube extends HTMLElement {
     }
 
     connectedCallback() {
-        this._pivot = this.querySelector('vz-pivot')
-        // @TODO crash when _pivot is not found
+        this._pivot = this.querySelector('vz-cube-pivot')
+        if (!this._pivot)
+            throw "Pivot element (<vz-cube-pivot>) not found." // @todo add a link to the doc
+
         this._addEventHandlers()
         this._refresh()
         
