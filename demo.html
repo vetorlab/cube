@@ -19,6 +19,8 @@
         }
         /* component (@todo move to js) */
         vz-cube {
+            background: black;
+            overflow: hidden;
             border: 2px solid gold;
             display: block;
             width: 100%;
@@ -28,6 +30,34 @@
             /* @todo move to attr fov-zoomed-in */
             /* perspective: 60vmax;  */
         }
+        vz-cube-pivot {
+            display: block;
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+        }
+        vz-cube-face {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            backface-visibility: hidden;
+        }
+        vz-cube-face[face=front]{transform:rotateY(90deg) translateX(calc(50% - 1px)) rotateY(-90deg)}
+        vz-cube-face[face=left]{transform:translateX(calc(-50% + 1px)) rotateY(90deg)}
+        vz-cube-face[face=right]{transform:translateX(calc(50% - 1px)) rotateY(-90deg)}
+        vz-cube-face[face=top]{transform:translateY(calc(-50% + 1px)) rotateX(-90deg)}
+        vz-cube-face[face=bottom]{transform:translateY(calc(50% - 1px)) rotateX(90deg)}
+        vz-cube-face[face=back]{transform:rotateY(90deg) translateX(calc(-50% + 1px)) rotateY(90deg)}
+
+
+
+
+
     </style>
 
     <title>Cube viewer demo</title>
