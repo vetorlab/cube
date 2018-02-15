@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Cubefaces</title>
+
+        <meta name="viewport" content="width=device-width, minimum-scale=1,
+            initial-scale=1, user-scalable=no">
+
+        <style>
+            html {
+                background: #333;
+                box-sizing: border-box;
+            }
+            html * {
+                box-sizing: inherit;
+            }
+            html, body {
+                margin: 0; padding: 0;
+            }
+            section {
+                width: 100vw; height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                overflow: hidden;
+            }
+            section > * {
+                flex: 0 0 auto;
+            }
+        </style>
+
+        <!-- webcomponents -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/1.0.1/webcomponents-lite.js" integrity="sha256-la6qW/wkFtceGefXKR37VKKRVXZvwUnUPiRPBmMpsP0=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/1.0.1/custom-elements-es5-adapter.js" integrity="sha256-uR3rlUJvFO/YuZv1B+fUPLirw4ORZWLcJtR590iIj30=" crossorigin="anonymous"></script>
+        <link rel="import" href="vz-cube.html">
+
+    </head>
+    <body>
+        <!-- <section>
+            <vz-cube>
+                <vz-cubepivot>
+                    <vz-cubeface data-face="top" style="background-image: url(static/images/cubes/01/top.jpg)"></vz-cubeface>
+                    <vz-cubeface data-face="bottom" style="background-image: url(static/images/cubes/01/bottom.jpg)"></vz-cubeface>
+                    <vz-cubeface data-face="front" style="background-image: url(static/images/cubes/01/front.jpg)"></vz-cubeface>
+                    <vz-cubeface data-face="back" style="background-image: url(static/images/cubes/01/back.jpg)"></vz-cubeface>
+                    <vz-cubeface data-face="left" style="background-image: url(static/images/cubes/01/left.jpg)"></vz-cubeface>
+                    <vz-cubeface data-face="right" style="background-image: url(static/images/cubes/01/right.jpg)"></vz-cubeface>
+                </vz-cubepivot>
+            </vz-cube>
+        </section> -->
+
+        <section>
+            <vz-cube id="cube">
+                <vz-cubepivot>
+                    <vz-cubeface data-face="top" style="background-image: url(static/images/cubes/02/top.jpg)"></vz-cubeface>
+                    <vz-cubeface data-face="bottom" style="background-image: url(static/images/cubes/02/bottom.jpg)"></vz-cubeface>
+                    <vz-cubeface data-face="front" style="background-image: url(static/images/cubes/02/front.jpg)"></vz-cubeface>
+                    <vz-cubeface data-face="back" style="background-image: url(static/images/cubes/02/back.jpg)"></vz-cubeface>
+                    <vz-cubeface data-face="left" style="background-image: url(static/images/cubes/02/left.jpg)"></vz-cubeface>
+                    <vz-cubeface data-face="right" style="background-image: url(static/images/cubes/02/right.jpg)"></vz-cubeface>
+
+                    <vz-cube-feature id="f1" title="Feature 1" yaw="0" pitch="0"></vz-cube-feature>
+                    <vz-cube-feature id="f2" title="Feature 2" yaw="20" pitch="20"></vz-cube-feature>
+
+                    <vz-cube-feature class="ping-pong-on-the-back" title="Right" yaw="165" pitch="0"></vz-cube-feature>
+                    <vz-cube-feature class="ping-pong-on-the-back" title="Left" yaw="-165" pitch="0"></vz-cube-feature>
+                    <vz-cube-feature class="ping-pong-on-the-back" title="Right" yaw="10" pitch="0"></vz-cube-feature>
+                    <vz-cube-feature class="ping-pong-on-the-back" title="Left" yaw="-10" pitch="0"></vz-cube-feature>
+
+                </vz-cubepivot>
+            </vz-cube>
+        </section>
+
+        <script>
+        f1.addEventListener('click', e => {
+            e.preventDefault()
+            cube.animateTo(e.currentTarget.yaw, e.currentTarget.pitch)
+            cube.freeze()
+            cube.zoomIn()
+        })
+
+        f2.addEventListener('click', e => {
+            e.preventDefault()
+            cube.animateTo(-e.currentTarget.yaw, -e.currentTarget.pitch, 1000, _ => {
+                cube.freeze()
+                cube.zoomIn()
+            })
+        })
+
+        document.querySelectorAll('.ping-pong-on-the-back').forEach(c => {
+            c.addEventListener('click', e => {
+                cube.animateTo(-e.currentTarget.yaw, -e.currentTarget.pitch, 500)
+            })
+        })
+        </script>
+    </body>
+</html>
