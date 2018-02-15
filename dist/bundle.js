@@ -1,1 +1,639 @@
-!function(t){function e(i){if(n[i])return n[i].exports;var r=n[i]={i:i,l:!1,exports:{}};return t[i].call(r.exports,r,r.exports,e),r.l=!0,r.exports}var n={};e.m=t,e.c=n,e.d=function(t,n,i){e.o(t,n)||Object.defineProperty(t,n,{configurable:!1,enumerable:!0,get:i})},e.n=function(t){var n=t&&t.__esModule?function(){return t.default}:function(){return t};return e.d(n,"a",n),n},e.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},e.p="",e(e.s=0)}([function(t,e,n){"use strict";function i(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}function r(t,e){if(!t)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!e||"object"!=typeof e&&"function"!=typeof e?t:e}function a(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Super expression must either be null or a function, not "+typeof e);t.prototype=Object.create(e&&e.prototype,{constructor:{value:t,enumerable:!1,writable:!0,configurable:!0}}),e&&(Object.setPrototypeOf?Object.setPrototypeOf(t,e):t.__proto__=e)}var o=function(){function t(t,e){for(var n=0;n<e.length;n++){var i=e[n];i.enumerable=i.enumerable||!1,i.configurable=!0,"value"in i&&(i.writable=!0),Object.defineProperty(t,i.key,i)}}return function(e,n,i){return n&&t(e.prototype,n),i&&t(e,i),e}}();n(1);var s=n(6),c=function(t){return t&&t.__esModule?t:{default:t}}(s),u=n(7),h=function(t){function e(){i(this,e);var t=r(this,(e.__proto__||Object.getPrototypeOf(e)).call(this));return t._isAnimating=!1,t._isDragging=!1,t._isFrozen=!1,t._draggingMultiplier=.1,t.yaw=0,t.pitch=0,t.roll=0,t._handleMouseDown=t._handleMouseDown.bind(t),t._handleMouseMove=t._handleMouseMove.bind(t),t._handleMouseUp=t._handleMouseUp.bind(t),t._handleTouchStart=t._handleTouchStart.bind(t),t._handleTouchMove=t._handleTouchMove.bind(t),t._handleTouchEnd=t._handleTouchEnd.bind(t),t._processAnimation=t._processAnimation.bind(t),t._refresh=t._refresh.bind(t),t.deviceOrientationManager=new c.default(t),t}return a(e,t),o(e,[{key:"connectedCallback",value:function(){this._pivot=this.querySelector("vz-cubepivot"),this._addEventHandlers(),this._refresh(),void 0!==this.deviceOrientationManager&&this.deviceOrientationManager.init()}},{key:"disconnectedCallback",value:function(){"function"==typeof cancelAnimationFrame?cancelAnimationFrame(this._refreshId):clearTimeout(this._refreshId),this._removeEventHandlers(),void 0!==this.deviceOrientationManager&&this.deviceOrientationManager.deinit()}},{key:"animateTo",value:function(t,e){var n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:1e3,i=arguments.length>3&&void 0!==arguments[3]?arguments[3]:null,r=t>0?t-360:t+360;Math.abs(r-this.yaw)<Math.abs(t-this.yaw)&&(t=r),this._isAnimating=!0,this._animationStartPos={yaw:this.yaw,pitch:this.pitch},this._animationEndPos={yaw:parseFloat(t)||0,pitch:parseFloat(e)||0},this._animationStartTime=Date.now(),this._animationEndTime=Date.now()+n,this._animationEndCallback=i}},{key:"freeze",value:function(){this._isFrozen=!0}},{key:"unfreeze",value:function(){this._isFrozen=!1}},{key:"zoomIn",value:function(){this.setAttribute("zoom",!0)}},{key:"zoomOut",value:function(){this.removeAttribute("zoom")}},{key:"_easing",value:function(t){return t<.5?2*t*t:(4-2*t)*t-1}},{key:"_addEventHandlers",value:function(){this.addEventListener("mousedown",this._handleMouseDown),window.addEventListener("mousemove",this._handleMouseMove),window.addEventListener("mouseup",this._handleMouseUp),this.addEventListener("touchstart",this._handleTouchStart),this.addEventListener("touchmove",this._handleTouchMove),this.addEventListener("touchend",this._handleTouchEnd),this.addEventListener("touchcancel",this._handleTouchEnd)}},{key:"_removeEventHandlers",value:function(){this.removeEventListener("mousedown",this._handleMouseDown),window.removeEventListener("mousemove",this._handleMouseMove),window.removeEventListener("mouseup",this._handleMouseUp),this.removeEventListener("touchstart",this._handleTouchStart),this.removeEventListener("touchmove",this._handleTouchMove),this.removeEventListener("touchend",this._handleTouchEnd),this.removeEventListener("touchcancel",this._handleTouchEnd)}},{key:"_handleMouseDown",value:function(t){this._isDragging=!0,this._lastDragEvent=t}},{key:"_handleMouseMove",value:function(t){!this._isDragging||this._isAnimating||this._isFrozen||(this.yaw+=(this._lastDragEvent.pageX-t.pageX)*this._draggingMultiplier,this.pitch-=(0,u.constraint)((this._lastDragEvent.pageY-t.pageY)*this._draggingMultiplier,-70,70),this._lastDragEvent=t)}},{key:"_handleMouseUp",value:function(t){this._isDragging=!1}},{key:"_handleTouchStart",value:function(t){Math.abs(this.pitch)<69&&t.preventDefault(),this._isDragging=!0,this._lastDragEvent=t.touches[0]}},{key:"_handleTouchMove",value:function(t){Math.abs(this.pitch)<69&&t.preventDefault(),!this._isDragging||this._isAnimating||this._isFrozen||(this.yaw+=(this._lastDragEvent.pageX-t.touches[0].pageX)*this._draggingMultiplier,this.pitch-=(this._lastDragEvent.pageY-t.touches[0].pageY)*this._draggingMultiplier,this._lastDragEvent=t.touches[0])}},{key:"_handleTouchEnd",value:function(t){Math.abs(this.pitch)<69&&t.preventDefault(),this._isDragging=!1}},{key:"_processAnimation",value:function(){var t=this;if(this._isAnimating){var e=Date.now(),n=(0,u.map)(e,this._animationStartTime,this._animationEndTime,0,1);this.yaw=(0,u.map)(this._easing(n),0,1,this._animationStartPos.yaw,this._animationEndPos.yaw),this.pitch=(0,u.map)(this._easing(n),0,1,this._animationStartPos.pitch,this._animationEndPos.pitch),this._animationEndTime<=e&&(this._isAnimating=!1,this.yaw=this._animationEndPos.yaw,this.pitch=this._animationEndPos.pitch,"function"==typeof this._animationEndCallback&&requestAnimationFrame(function(e){return t._animationEndCallback.call(t)}))}}},{key:"_normalize",value:function(){this.pitch=(0,u.constraint)(this.pitch,-70,70),this.yaw>180&&(this.yaw-=360),this.yaw<-180&&(this.yaw+=360),this.roll<-180&&(this.roll+=360)}},{key:"_refresh",value:function(){this._processAnimation(),this._normalize();var t=getComputedStyle(this).perspective;this._pivot.style.transform="translateZ("+t+") rotateZ("+this.roll+"deg) rotateX("+this.pitch+"deg) rotateY("+this.yaw+"deg)",this._refreshId="function"==typeof requestAnimationFrame?requestAnimationFrame(this._refresh):setTimeout(this._refresh,1e3/30)}}]),e}(HTMLElement);customElements.define("vz-cube",h);var l=function(t){function e(){i(this,e);var t=r(this,(e.__proto__||Object.getPrototypeOf(e)).call(this));return t._yaw=t.getAttribute("yaw"),t._pitch=t.getAttribute("pitch"),t._refresh=t._refresh.bind(t),t._refresh(),t}return a(e,t),o(e,[{key:"connectedCallback",value:function(){}},{key:"attributeChangedCallback",value:function(t,e,n){switch(t){case"yaw":this._yaw=parseFloat(n)||0;break;case"pitch":this._pitch=parseFloat(n)||0}this._refresh()}},{key:"_refresh",value:function(){this.style.transform="rotateY("+this.yaw+"deg) rotateX("+this.pitch+"deg) translateZ(calc(-50vmax + 2rem))"}},{key:"yaw",get:function(){return this._yaw}},{key:"pitch",get:function(){return this._pitch}}]),e}(HTMLElement);customElements.define("vz-cube-feature",l)},function(t,e,n){var i=n(2);"string"==typeof i&&(i=[[t.i,i,""]]);var r={};r.transform=void 0;n(4)(i,r);i.locals&&(t.exports=i.locals)},function(t,e,n){e=t.exports=n(3)(void 0),e.push([t.i,"vz-cube,vz-cubeface,vz-cubepivot{display:block}vz-cube{width:100vmax;height:100vmax;overflow:hidden;perspective:40vmax;transition:perspective .5s ease-in-out}vz-cube[zoom]{perspective:60vmax}vz-cubepivot{position:relative;width:100%;height:100%;transform-style:preserve-3d}vz-cubeface{position:absolute;left:0;top:0;width:100%;height:100%;background-size:100% 100%;background-repeat:no-repeat;backface-visibility:hidden}vz-cubeface[data-face=front]{transform:rotateY(90deg) translateX(calc(50% - 1px)) rotateY(-90deg)}vz-cubeface[data-face=left]{transform:translateX(calc(-50% + 1px)) rotateY(90deg)}vz-cubeface[data-face=right]{transform:translateX(calc(50% - 1px)) rotateY(-90deg)}vz-cubeface[data-face=top]{transform:translateY(calc(-50% + 1px)) rotateX(-90deg)}vz-cubeface[data-face=bottom]{transform:translateY(calc(50% - 1px)) rotateX(90deg)}vz-cubeface[data-face=back]{transform:rotateY(90deg) translateX(calc(-50% + 1px)) rotateY(90deg)}vz-cube-feature{width:2rem;height:2rem;margin-top:-1rem;margin-left:-1rem;position:absolute;top:50%;left:50%;background:#fff;border-radius:50%;opacity:.666;transform:translateZ(calc(-50vmax + 1px));cursor:pointer}",""])},function(t,e){function n(t,e){var n=t[1]||"",r=t[3];if(!r)return n;if(e&&"function"==typeof btoa){var a=i(r);return[n].concat(r.sources.map(function(t){return"/*# sourceURL="+r.sourceRoot+t+" */"})).concat([a]).join("\n")}return[n].join("\n")}function i(t){return"/*# sourceMappingURL=data:application/json;charset=utf-8;base64,"+btoa(unescape(encodeURIComponent(JSON.stringify(t))))+" */"}t.exports=function(t){var e=[];return e.toString=function(){return this.map(function(e){var i=n(e,t);return e[2]?"@media "+e[2]+"{"+i+"}":i}).join("")},e.i=function(t,n){"string"==typeof t&&(t=[[null,t,""]]);for(var i={},r=0;r<this.length;r++){var a=this[r][0];"number"==typeof a&&(i[a]=!0)}for(r=0;r<t.length;r++){var o=t[r];"number"==typeof o[0]&&i[o[0]]||(n&&!o[2]?o[2]=n:n&&(o[2]="("+o[2]+") and ("+n+")"),e.push(o))}},e}},function(t,e,n){function i(t,e){for(var n=0;n<t.length;n++){var i=t[n],r=v[i.id];if(r){r.refs++;for(var a=0;a<r.parts.length;a++)r.parts[a](i.parts[a]);for(;a<i.parts.length;a++)r.parts.push(h(i.parts[a],e))}else{for(var o=[],a=0;a<i.parts.length;a++)o.push(h(i.parts[a],e));v[i.id]={id:i.id,refs:1,parts:o}}}}function r(t,e){for(var n=[],i={},r=0;r<t.length;r++){var a=t[r],o=e.base?a[0]+e.base:a[0],s=a[1],c=a[2],u=a[3],h={css:s,media:c,sourceMap:u};i[o]?i[o].parts.push(h):n.push(i[o]={id:o,parts:[h]})}return n}function a(t,e){var n=m(t.insertInto);if(!n)throw new Error("Couldn't find a style target. This probably means that the value for the 'insertInto' parameter is invalid.");var i=b[b.length-1];if("top"===t.insertAt)i?i.nextSibling?n.insertBefore(e,i.nextSibling):n.appendChild(e):n.insertBefore(e,n.firstChild),b.push(e);else{if("bottom"!==t.insertAt)throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");n.appendChild(e)}}function o(t){if(null===t.parentNode)return!1;t.parentNode.removeChild(t);var e=b.indexOf(t);e>=0&&b.splice(e,1)}function s(t){var e=document.createElement("style");return t.attrs.type="text/css",u(e,t.attrs),a(t,e),e}function c(t){var e=document.createElement("link");return t.attrs.type="text/css",t.attrs.rel="stylesheet",u(e,t.attrs),a(t,e),e}function u(t,e){Object.keys(e).forEach(function(n){t.setAttribute(n,e[n])})}function h(t,e){var n,i,r,a;if(e.transform&&t.css){if(!(a=e.transform(t.css)))return function(){};t.css=a}if(e.singleton){var u=g++;n=_||(_=s(e)),i=l.bind(null,n,u,!1),r=l.bind(null,n,u,!0)}else t.sourceMap&&"function"==typeof URL&&"function"==typeof URL.createObjectURL&&"function"==typeof URL.revokeObjectURL&&"function"==typeof Blob&&"function"==typeof btoa?(n=c(e),i=d.bind(null,n,e),r=function(){o(n),n.href&&URL.revokeObjectURL(n.href)}):(n=s(e),i=f.bind(null,n),r=function(){o(n)});return i(t),function(e){if(e){if(e.css===t.css&&e.media===t.media&&e.sourceMap===t.sourceMap)return;i(t=e)}else r()}}function l(t,e,n,i){var r=n?"":i.css;if(t.styleSheet)t.styleSheet.cssText=w(e,r);else{var a=document.createTextNode(r),o=t.childNodes;o[e]&&t.removeChild(o[e]),o.length?t.insertBefore(a,o[e]):t.appendChild(a)}}function f(t,e){var n=e.css,i=e.media;if(i&&t.setAttribute("media",i),t.styleSheet)t.styleSheet.cssText=n;else{for(;t.firstChild;)t.removeChild(t.firstChild);t.appendChild(document.createTextNode(n))}}function d(t,e,n){var i=n.css,r=n.sourceMap,a=void 0===e.convertToAbsoluteUrls&&r;(e.convertToAbsoluteUrls||a)&&(i=y(i)),r&&(i+="\n/*# sourceMappingURL=data:application/json;base64,"+btoa(unescape(encodeURIComponent(JSON.stringify(r))))+" */");var o=new Blob([i],{type:"text/css"}),s=t.href;t.href=URL.createObjectURL(o),s&&URL.revokeObjectURL(s)}var v={},p=function(t){var e;return function(){return void 0===e&&(e=t.apply(this,arguments)),e}}(function(){return window&&document&&document.all&&!window.atob}),m=function(t){var e={};return function(n){return void 0===e[n]&&(e[n]=t.call(this,n)),e[n]}}(function(t){return document.querySelector(t)}),_=null,g=0,b=[],y=n(5);t.exports=function(t,e){if("undefined"!=typeof DEBUG&&DEBUG&&"object"!=typeof document)throw new Error("The style-loader cannot be used in a non-browser environment");e=e||{},e.attrs="object"==typeof e.attrs?e.attrs:{},e.singleton||(e.singleton=p()),e.insertInto||(e.insertInto="head"),e.insertAt||(e.insertAt="bottom");var n=r(t,e);return i(n,e),function(t){for(var a=[],o=0;o<n.length;o++){var s=n[o],c=v[s.id];c.refs--,a.push(c)}if(t){i(r(t,e),e)}for(var o=0;o<a.length;o++){var c=a[o];if(0===c.refs){for(var u=0;u<c.parts.length;u++)c.parts[u]();delete v[c.id]}}}};var w=function(){var t=[];return function(e,n){return t[e]=n,t.filter(Boolean).join("\n")}}()},function(t,e){t.exports=function(t){var e="undefined"!=typeof window&&window.location;if(!e)throw new Error("fixUrls requires window.location");if(!t||"string"!=typeof t)return t;var n=e.protocol+"//"+e.host,i=n+e.pathname.replace(/\/[^\/]*$/,"/");return t.replace(/url\s*\(((?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)\)/gi,function(t,e){var r=e.trim().replace(/^"(.*)"$/,function(t,e){return e}).replace(/^'(.*)'$/,function(t,e){return e});if(/^(#|data:|http:\/\/|https:\/\/|file:\/\/\/)/i.test(r))return t;var a;return a=0===r.indexOf("//")?r:0===r.indexOf("/")?n+r:i+r.replace(/^\.\//,""),"url("+JSON.stringify(a)+")"})}},function(t,e,n){"use strict";function i(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(e,"__esModule",{value:!0});var r=function(){function t(t,e){for(var n=0;n<e.length;n++){var i=e[n];i.enumerable=i.enumerable||!1,i.configurable=!0,"value"in i&&(i.writable=!0),Object.defineProperty(t,i.key,i)}}return function(e,n,i){return n&&t(e.prototype,n),i&&t(e,i),e}}(),a=function(){function t(e){i(this,t),this.cube=e,this.orientation=window.orientation||0,this._handleDeviceOrientation=this._handleDeviceOrientation.bind(this),this._handleDeviceOrientation=this._handleDeviceOrientation.bind(this)}return r(t,[{key:"init",value:function(){window.addEventListener("deviceorientation",this._handleDeviceOrientation)}},{key:"deinit",value:function(){window.removeEventListener("deviceorientation",this._handleDeviceOrientation)}},{key:"_handleDeviceOrientation",value:function(t){var e=this._getOrientation(t),n=this._previousOrientation;if(void 0!==n){var i=e.x-n.x,r=e.y-n.y;Math.abs(r)>90&&(i=0,r=0),this.cube.yaw+=i,this.cube.pitch+=r}this._previousOrientation=e}},{key:"_getOrientation",value:function(t){var e=t.alpha,n=t.beta,i=t.gamma,r=window.orientation||0,a={x:-(e+i),y:n};switch(r){case 90:a={x:90-(e+n),y:-i};break;case-90:a={x:90-(e+n),y:i}}return a}}]),t}();e.default=a},function(t,e,n){"use strict";function i(t,e,n){var i=arguments.length>3&&void 0!==arguments[3]?arguments[3]:0;return(t-e)/(n-e)*((arguments.length>4&&void 0!==arguments[4]?arguments[4]:1)-i)+i}function r(t){var e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:0,n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:1;return Math.min(Math.max(t,e),n)}Object.defineProperty(e,"__esModule",{value:!0}),e.map=i,e.constraint=r}]);
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _Cube = __webpack_require__(1);
+
+var _Cube2 = _interopRequireDefault(_Cube);
+
+var _Face = __webpack_require__(4);
+
+var _Face2 = _interopRequireDefault(_Face);
+
+var _Feature = __webpack_require__(5);
+
+var _Feature2 = _interopRequireDefault(_Feature);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+customElements.define('vz-cube', _Cube2.default);
+customElements.define('vz-cube-face', _Face2.default);
+customElements.define('vz-cube-feature', _Feature2.default);
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _DeviceOrientationManager = __webpack_require__(2);
+
+var _DeviceOrientationManager2 = _interopRequireDefault(_DeviceOrientationManager);
+
+var _math = __webpack_require__(3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+// import {camelCase} from 'lodash/fp'
+
+// console.log(camelCase)
+var defaultStyles = '\n    background: black;\n    overflow: hidden;\n    border: 2px solid gold;\n    display: block;\n    width: 100%;\n    height: 100%;\n    /* @todo move to attr fov */\n    perspective: 40vmax;\n    /* @todo move to attr fov-zoomed-in */\n    /* perspective: 60vmax;  */\n';
+
+var Cube = function (_HTMLElement) {
+    _inherits(Cube, _HTMLElement);
+
+    _createClass(Cube, null, [{
+        key: 'observedAttributes',
+        get: function get() {
+            return ['fov', 'zoom-fov'];
+        }
+    }]);
+
+    function Cube() {
+        _classCallCheck(this, Cube);
+
+        var _this = _possibleConstructorReturn(this, (Cube.__proto__ || Object.getPrototypeOf(Cube)).call(this));
+
+        _this.style.cssText = defaultStyles;
+
+        _this._isAnimating = false;
+        _this._isDragging = false;
+        _this._isFrozen = false;
+
+        _this._draggingMultiplier = 0.1;
+
+        _this.yaw = 0;
+        _this.pitch = 0;
+        _this.roll = 0;
+
+        _this._handleMouseDown = _this._handleMouseDown.bind(_this);
+        _this._handleMouseMove = _this._handleMouseMove.bind(_this);
+        _this._handleMouseUp = _this._handleMouseUp.bind(_this);
+        _this._handleTouchStart = _this._handleTouchStart.bind(_this);
+        _this._handleTouchMove = _this._handleTouchMove.bind(_this);
+        _this._handleTouchEnd = _this._handleTouchEnd.bind(_this);
+        _this._processAnimation = _this._processAnimation.bind(_this);
+        _this._refresh = _this._refresh.bind(_this);
+
+        _this.deviceOrientationManager = new _DeviceOrientationManager2.default(_this);
+        return _this;
+    }
+
+    _createClass(Cube, [{
+        key: 'connectedCallback',
+        value: function connectedCallback() {
+            this._pivot = this.querySelector('vz-cube-pivot');
+            if (!this._pivot) throw "Pivot element (<vz-cube-pivot>) not found."; // @todo add a link to the doc
+
+            this._addEventHandlers();
+            this._refresh();
+
+            if (this.deviceOrientationManager !== undefined) this.deviceOrientationManager.init();
+        }
+    }, {
+        key: 'disconnectedCallback',
+        value: function disconnectedCallback() {
+            typeof cancelAnimationFrame === 'function' ? cancelAnimationFrame(this._refreshId) : clearTimeout(this._refreshId);
+
+            this._removeEventHandlers();
+
+            if (this.deviceOrientationManager !== undefined) this.deviceOrientationManager.deinit();
+        }
+    }, {
+        key: 'attributeChangedCallback',
+        value: function attributeChangedCallback(name, oldValue, newValue) {
+            this[name] = newValue;
+            console.log(camelCase(name));
+        }
+
+        // API
+
+    }, {
+        key: 'animateTo',
+        value: function animateTo(yaw, pitch) {
+            var duration = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1000;
+            var callback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+
+            // set yaw to the neares yaw
+            var altYaw = yaw > 0 ? yaw - 360 : yaw + 360;
+            if (Math.abs(altYaw - this.yaw) < Math.abs(yaw - this.yaw)) {
+                yaw = altYaw;
+            }
+
+            this._isAnimating = true;
+            this._animationStartPos = { yaw: this.yaw, pitch: this.pitch };
+            this._animationEndPos = { yaw: parseFloat(yaw) || 0, pitch: parseFloat(pitch) || 0 };
+            this._animationStartTime = Date.now();
+            this._animationEndTime = Date.now() + duration;
+            this._animationEndCallback = callback;
+        }
+    }, {
+        key: 'freeze',
+        value: function freeze() {
+            this._isFrozen = true;
+        }
+    }, {
+        key: 'unfreeze',
+        value: function unfreeze() {
+            this._isFrozen = false;
+        }
+    }, {
+        key: 'zoomIn',
+        value: function zoomIn() {
+            this.setAttribute('zoom', true);
+        }
+    }, {
+        key: 'zoomOut',
+        value: function zoomOut() {
+            this.removeAttribute('zoom');
+        }
+    }, {
+        key: '_easing',
+        value: function _easing(t) {
+            return t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+        }
+    }, {
+        key: '_addEventHandlers',
+        value: function _addEventHandlers() {
+            this.addEventListener('mousedown', this._handleMouseDown);
+            window.addEventListener('mousemove', this._handleMouseMove);
+            window.addEventListener('mouseup', this._handleMouseUp);
+            this.addEventListener('touchstart', this._handleTouchStart);
+            this.addEventListener('touchmove', this._handleTouchMove);
+            this.addEventListener('touchend', this._handleTouchEnd);
+            this.addEventListener('touchcancel', this._handleTouchEnd);
+        }
+    }, {
+        key: '_removeEventHandlers',
+        value: function _removeEventHandlers() {
+            this.removeEventListener('mousedown', this._handleMouseDown);
+            window.removeEventListener('mousemove', this._handleMouseMove);
+            window.removeEventListener('mouseup', this._handleMouseUp);
+            this.removeEventListener('touchstart', this._handleTouchStart);
+            this.removeEventListener('touchmove', this._handleTouchMove);
+            this.removeEventListener('touchend', this._handleTouchEnd);
+            this.removeEventListener('touchcancel', this._handleTouchEnd);
+        }
+    }, {
+        key: '_handleMouseDown',
+        value: function _handleMouseDown(e) {
+            this._isDragging = true;
+            this._lastDragEvent = e;
+        }
+    }, {
+        key: '_handleMouseMove',
+        value: function _handleMouseMove(e) {
+            if (!this._isDragging || this._isAnimating || this._isFrozen) return;
+
+            this.yaw += (this._lastDragEvent.pageX - e.pageX) * this._draggingMultiplier;
+            this.pitch -= (0, _math.constraint)((this._lastDragEvent.pageY - e.pageY) * this._draggingMultiplier, -70, 70);
+
+            this._lastDragEvent = e;
+        }
+    }, {
+        key: '_handleMouseUp',
+        value: function _handleMouseUp(e) {
+            this._isDragging = false;
+        }
+    }, {
+        key: '_handleTouchStart',
+        value: function _handleTouchStart(e) {
+            if (Math.abs(this.pitch) < 69) {
+                e.preventDefault();
+            }
+            this._isDragging = true;
+            this._lastDragEvent = e.touches[0];
+        }
+    }, {
+        key: '_handleTouchMove',
+        value: function _handleTouchMove(e) {
+            if (Math.abs(this.pitch) < 69) {
+                e.preventDefault();
+            }
+            if (!this._isDragging || this._isAnimating || this._isFrozen) return;
+
+            this.yaw += (this._lastDragEvent.pageX - e.touches[0].pageX) * this._draggingMultiplier;
+            this.pitch -= (this._lastDragEvent.pageY - e.touches[0].pageY) * this._draggingMultiplier;
+
+            this._lastDragEvent = e.touches[0];
+        }
+    }, {
+        key: '_handleTouchEnd',
+        value: function _handleTouchEnd(e) {
+            if (Math.abs(this.pitch) < 69) {
+                e.preventDefault();
+            }
+            this._isDragging = false;
+        }
+    }, {
+        key: '_processAnimation',
+        value: function _processAnimation() {
+            var _this2 = this;
+
+            if (!this._isAnimating) return;
+
+            var now = Date.now();
+            var t = (0, _math.map)(now, this._animationStartTime, this._animationEndTime, 0, 1);
+
+            this.yaw = (0, _math.map)(this._easing(t), 0, 1, this._animationStartPos.yaw, this._animationEndPos.yaw);
+            this.pitch = (0, _math.map)(this._easing(t), 0, 1, this._animationStartPos.pitch, this._animationEndPos.pitch);
+
+            if (this._animationEndTime <= now) {
+                this._isAnimating = false;
+                this.yaw = this._animationEndPos.yaw;
+                this.pitch = this._animationEndPos.pitch;
+
+                // @TODO normalize
+
+                if (typeof this._animationEndCallback === 'function') {
+                    requestAnimationFrame(function (_) {
+                        return _this2._animationEndCallback.call(_this2);
+                    });
+                }
+            }
+        }
+    }, {
+        key: '_normalize',
+        value: function _normalize() {
+            this.pitch = (0, _math.constraint)(this.pitch, -70, 70);
+            if (this.yaw > 180) this.yaw -= 360;
+            if (this.yaw < -180) this.yaw += 360;
+            if (this.roll < -180) this.roll += 360;
+        }
+    }, {
+        key: '_refresh',
+        value: function _refresh() {
+            this._processAnimation();
+            this._normalize();
+
+            var perspective = getComputedStyle(this).perspective;
+
+            this._pivot.style.transform = 'translateZ(' + perspective + ') rotateZ(' + this.roll + 'deg) rotateX(' + this.pitch + 'deg) rotateY(' + this.yaw + 'deg)';
+
+            // recurse
+            this._refreshId = typeof requestAnimationFrame === 'function' ? requestAnimationFrame(this._refresh) : setTimeout(this._refresh, 1000 / 30);
+        }
+    }]);
+
+    return Cube;
+}(HTMLElement);
+
+exports.default = Cube;
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var DeviceOrientationManager = function () {
+    function DeviceOrientationManager(cube) {
+        _classCallCheck(this, DeviceOrientationManager);
+
+        this.cube = cube;
+        this.orientation = window.orientation || 0;
+
+        this._handleDeviceOrientation = this._handleDeviceOrientation.bind(this);
+        this._handleDeviceOrientation = this._handleDeviceOrientation.bind(this);
+    }
+
+    _createClass(DeviceOrientationManager, [{
+        key: 'init',
+        value: function init() {
+            window.addEventListener('deviceorientation', this._handleDeviceOrientation);
+        }
+    }, {
+        key: 'deinit',
+        value: function deinit() {
+            window.removeEventListener('deviceorientation', this._handleDeviceOrientation);
+        }
+    }, {
+        key: '_handleDeviceOrientation',
+        value: function _handleDeviceOrientation(e) {
+            var curr = this._getOrientation(e);
+            var prev = this._previousOrientation;
+
+            // @FIXME s/x/y/g s/y/x/g
+            if (prev !== undefined) {
+                var difX = curr.x - prev.x;
+                var difY = curr.y - prev.y;
+                if (Math.abs(difY) > 90) {
+                    difX = 0;
+                    difY = 0;
+                }
+                this.cube.yaw += difX;
+                this.cube.pitch += difY;
+                // this.cube.roll    += curr.z - prev.z
+            }
+
+            this._previousOrientation = curr;
+        }
+    }, {
+        key: '_getOrientation',
+        value: function _getOrientation(_ref) {
+            var alpha = _ref.alpha,
+                beta = _ref.beta,
+                gamma = _ref.gamma;
+
+            var orientation = window.orientation || 0;
+
+            var r = {
+                x: -(alpha + gamma),
+                y: beta
+            };
+
+            switch (orientation) {
+                case 90:
+                    // landscape (left)
+                    r = {
+                        x: 90 - (alpha + beta),
+                        y: -gamma
+                    };
+                    break;
+                case -90:
+                    r = {
+                        x: 90 - (alpha + beta),
+                        y: gamma
+                    };
+                    break;
+                case 180:
+                // portrait (upside-down)
+            }
+
+            return r;
+        }
+    }]);
+
+    return DeviceOrientationManager;
+}();
+
+exports.default = DeviceOrientationManager;
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.map = map;
+exports.constraint = constraint;
+function map(n, start1, stop1) {
+    var start2 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+    var stop2 = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 1;
+
+    return (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
+}
+function constraint(n) {
+    var min = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+    var max = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
+
+    return Math.min(Math.max(n, min), max);
+}
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var defaultStyles = '\n    position: absolute;\n    left: 0;\n    top: 0;\n    width: 100%;\n    height: 100%;\n    background-size: 100% 100%;\n    background-repeat: no-repeat;\n    backface-visibility: hidden;\n';
+
+var transforms = {
+    front: 'rotateY(90deg) translateX(calc(50% - 1px)) rotateY(-90deg)',
+    left: 'translateX(calc(-50% + 1px)) rotateY(90deg)',
+    right: 'translateX(calc(50% - 1px)) rotateY(-90deg)',
+    top: 'translateY(calc(-50% + 1px)) rotateX(-90deg)',
+    bottom: 'translateY(calc(50% - 1px)) rotateX(90deg)',
+    back: 'rotateY(90deg) translateX(calc(-50% + 1px)) rotateY(90deg)'
+};
+
+var Face = function (_HTMLElement) {
+    _inherits(Face, _HTMLElement);
+
+    _createClass(Face, null, [{
+        key: 'observedAttributes',
+        get: function get() {
+            return ['src', 'face'];
+        }
+    }]);
+
+    function Face() {
+        _classCallCheck(this, Face);
+
+        var _this = _possibleConstructorReturn(this, (Face.__proto__ || Object.getPrototypeOf(Face)).call(this));
+
+        _this.style.cssText = defaultStyles;
+        return _this;
+    }
+
+    _createClass(Face, [{
+        key: 'attributeChangedCallback',
+        value: function attributeChangedCallback(name, oldValue, newValue) {
+            this[name] = newValue;
+        }
+    }, {
+        key: 'face',
+        set: function set(face) {
+            if (!transforms.hasOwnProperty(face)) throw 'Please use one of the allowed face types: ' + Object.keys(transforms).join(', ');
+
+            this.style.transform = transforms[face];
+        },
+        get: function get() {
+            return this.getAttribute('face');
+        }
+    }, {
+        key: 'src',
+        set: function set(src) {
+            this.style.backgroundImage = 'url(' + src + ')';
+        },
+        get: function get() {
+            return this.getAttribute('src');
+        }
+    }]);
+
+    return Face;
+}(HTMLElement);
+
+exports.default = Face;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Feature = function (_HTMLElement) {
+    _inherits(Feature, _HTMLElement);
+
+    function Feature() {
+        _classCallCheck(this, Feature);
+
+        var _this = _possibleConstructorReturn(this, (Feature.__proto__ || Object.getPrototypeOf(Feature)).call(this));
+
+        _this._yaw = _this.getAttribute('yaw');
+        _this._pitch = _this.getAttribute('pitch');
+        _this._refresh = _this._refresh.bind(_this);
+
+        _this._refresh();
+        return _this;
+    }
+
+    _createClass(Feature, [{
+        key: 'connectedCallback',
+        value: function connectedCallback() {}
+    }, {
+        key: 'attributeChangedCallback',
+        value: function attributeChangedCallback(attrName, oldVal, newVal) {
+            switch (attrName) {
+                case 'yaw':
+                    this._yaw = parseFloat(newVal) || 0;break;
+                case 'pitch':
+                    this._pitch = parseFloat(newVal) || 0;break;
+            }
+
+            this._refresh();
+        }
+    }, {
+        key: '_refresh',
+        value: function _refresh() {
+            this.style.transform = 'rotateY(' + this.yaw + 'deg) rotateX(' + this.pitch + 'deg) translateZ(calc(-50vmax + 2rem))';
+        }
+    }, {
+        key: 'yaw',
+        get: function get() {
+            return this._yaw;
+        }
+    }, {
+        key: 'pitch',
+        get: function get() {
+            return this._pitch;
+        }
+    }]);
+
+    return Feature;
+}(HTMLElement);
+
+exports.default = Feature;
+
+/***/ })
+/******/ ]);

@@ -1,13 +1,5 @@
-const defaultStyles = `
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    backface-visibility: hidden;
-`
+import {camelCase} from 'lodash/fp'
+
 
 const transforms = {
     front: 'rotateY(90deg) translateX(calc(50% - 1px)) rotateY(-90deg)',
@@ -23,14 +15,8 @@ class Face extends HTMLElement {
         return ['src', 'face']
     }
 
-    constructor() {
-        super()
-
-        this.style.cssText = defaultStyles
-    }
-
     attributeChangedCallback(name, oldValue, newValue) {
-        this[name] = newValue
+        this[camelCase(name)] = newValue
     }
 
     set face(face) {

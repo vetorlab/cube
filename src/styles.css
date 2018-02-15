@@ -1,0 +1,29 @@
+vz-cube {
+    background: red;
+    overflow: hidden;
+    border: 2px solid gold;
+    display: block;
+    width: 100%;
+    height: 100%;
+    /* @todo move to attr fov */
+    perspective: 40vmax;
+    /* @todo move to attr fov-zoomed-in */
+    /* perspective: 60vmax;  */
+}
+vz-cube-pivot {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+}
+vz-cube-face {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    backface-visibility: hidden;
+}

@@ -2,19 +2,6 @@ import DeviceOrientationManager from './DeviceOrientationManager'
 import {constraint, map} from './utils/math'
 // import {camelCase} from 'lodash/fp'
 
-// console.log(camelCase)
-const defaultStyles = `
-    background: black;
-    overflow: hidden;
-    border: 2px solid gold;
-    display: block;
-    width: 100%;
-    height: 100%;
-    /* @todo move to attr fov */
-    perspective: 40vmax;
-    /* @todo move to attr fov-zoomed-in */
-    /* perspective: 60vmax;  */
-`
 
 class Cube extends HTMLElement {
     static get observedAttributes() {
@@ -23,8 +10,6 @@ class Cube extends HTMLElement {
 
     constructor() {
         super()
-
-        this.style.cssText = defaultStyles
 
         this._isAnimating   = false
         this._isDragging    = false
