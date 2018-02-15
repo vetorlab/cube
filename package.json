@@ -1,32 +1,31 @@
 {
   "name": "vz-cube",
-  "version": "4.0.0",
-  "description": "A dummy project for testing a cubeface script",
-  "main": "index.html",
-  "dependencies": {
-    "lodash": "^4.17.5"
-  },
+  "author": "Felds Liscia <dev@felds.com.br> (https://felds.com.br)",
+  "version": "5.0.0",
+  "description": "A collection of web components to show panoramic content.",
+  "main": "src/main.js",
   "devDependencies": {
-    "babel-core": "^6.25.0",
-    "babel-loader": "^7.0.0",
-    "babel-preset-env": "^1.5.2",
-    "css-loader": "^0.28.4",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "css-loader": "^0.28.9",
     "style-loader": "^0.18.2",
-    "webpack": "^3.8.1"
+    "lodash": "^4.17.5",
+    "webpack": "^3.11.0",
+    "webpack-dev-server": "^2.11.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack -w -p",
+    "start": "webpack-dev-server",
     "build": "webpack -p"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/felds/cube.git"
+    "url": "git+https://github.com/vzlab/cube.git"
   },
-  "author": "Felds Liscia <dev@felds.com.br>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/felds/cube/issues"
+    "url": "https://github.com/vzlab/cube/issues"
   },
-  "homepage": "https://github.com/felds/cube#readme"
+  "homepage": "https://github.com/vzlab/cube#readme"
 }
