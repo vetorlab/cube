@@ -1,11 +1,13 @@
 import DeviceOrientationManager from './DeviceOrientationManager'
 import {constraint, map} from './utils/math'
-// import {camelCase} from 'lodash/fp'
 
+
+const DEFAULT_FOV = '40vmax'
+const ZOOM_FOV = '60vmax'
 
 class Cube extends HTMLElement {
     static get observedAttributes() {
-        return ['fov', 'zoom-fov']
+        return ['zoomed-in']
     }
 
     constructor() {
@@ -34,6 +36,8 @@ class Cube extends HTMLElement {
     }
 
     connectedCallback() {
+        this._updatePerspective()
+
         this._pivot = this.querySelector('vz-cube-pivot')
         if (!this._pivot)
             throw "Pivot element (<vz-cube-pivot>) not found." // @todo add a link to the doc
@@ -57,11 +61,54 @@ class Cube extends HTMLElement {
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
-        this[name] = newValue
-        console.log(camelCase(name))
+        switch (name) {
+        case 'zoomed-in':
+            this._updatePerspective()
+            break
+        }
     }
 
-    // API
+    //#region Getters and Setters
+
+    set fov(value) {
+        this.setAttribute('fov', value)
+    }
+
+    get fov() {
+        return this.getAttribute('fov') || DEFAULT_FOV
+    }
+
+    set zoomFov(value) {
+        this.setAttribute('zoom-fov', value)
+    }
+
+    get zoomFov() {
+        return this.getAttribute('zoom-fov') || ZOOM_FOV
+    }
+
+    set zoomedIn(value) {
+        if (value) this.setAttribute('zoomed-in', '')
+        else this.removeAttribute('zoomed-in')
+    }
+
+    get zoomedIn() {
+        return this.hasAttribute('zoomed-in')
+    }
+
+    set frozen(value) {
+        if (value) this.setAttribute('frozen', '')
+        else this.removeAttribute('frozen')
+    }
+
+    get frozen() {
+        return this.hasAttribute('frozen')
+    }
+
+    //#endregion
+
+
+    //#region Animation
+    
     animateTo(yaw, pitch, duration = 1000, callback = null) {
         // set yaw to the neares yaw
         const altYaw = yaw > 0
@@ -79,6 +126,11 @@ class Cube extends HTMLElement {
         this._animationEndCallback  = callback
     }
 
+    //#endregion
+
+
+    //#region Freezing
+    
     freeze() {
         this._isFrozen = true
     }
@@ -86,13 +138,30 @@ class Cube extends HTMLElement {
     unfreeze() {
         this._isFrozen = false
     }
+    
+    //#endregion
 
-    zoomIn() {
-        this.setAttribute('zoom', true)
+
+    //#region Zooming
+
+    zoomIn() {        
+        this.zoomedIn = true
     }
     zoomOut() {
-        this.removeAttribute('zoom')
+        this.zoomedIn = false
     }
+    toggleZoom() {
+        this.zoomedIn = !this.zoomedIn
+    }
+    _updatePerspective() {
+        this.style.perspective = this.zoomedIn
+            ? this.zoomFov
+            : this.fov
+    }
+
+    //#endregion
+
+
 
     _easing(t) {
         return t<.5 ? 2*t*t : -1+(4-2*t)*t
