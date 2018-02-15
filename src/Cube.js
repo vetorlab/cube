@@ -1,9 +1,30 @@
-import DeviceOrientationManager from './DeviceOrientationManager.js'
-import {constraint, map} from './utils/math.js'
+import DeviceOrientationManager from './DeviceOrientationManager'
+import {constraint, map} from './utils/math'
+// import {camelCase} from 'lodash/fp'
+
+// console.log(camelCase)
+const defaultStyles = `
+    background: black;
+    overflow: hidden;
+    border: 2px solid gold;
+    display: block;
+    width: 100%;
+    height: 100%;
+    /* @todo move to attr fov */
+    perspective: 40vmax;
+    /* @todo move to attr fov-zoomed-in */
+    /* perspective: 60vmax;  */
+`
 
 class Cube extends HTMLElement {
+    static get observedAttributes() {
+        return ['fov', 'zoom-fov']
+    }
+
     constructor() {
         super()
+
+        this.style.cssText = defaultStyles
 
         this._isAnimating   = false
         this._isDragging    = false
@@ -50,6 +71,12 @@ class Cube extends HTMLElement {
             this.deviceOrientationManager.deinit()
     }
 
+    attributeChangedCallback(name, oldValue, newValue) {
+        this[name] = newValue
+        console.log(camelCase(name))
+    }
+
+    // API
     animateTo(yaw, pitch, duration = 1000, callback = null) {
         // set yaw to the neares yaw
         const altYaw = yaw > 0

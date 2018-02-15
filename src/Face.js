@@ -1,5 +1,3 @@
-// @ts-check
-
 const defaultStyles = `
     position: absolute;
     left: 0;

@@ -3,7 +3,9 @@
   "version": "4.0.0",
   "description": "A dummy project for testing a cubeface script",
   "main": "index.html",
-  "dependencies": {},
+  "dependencies": {
+    "lodash": "^4.17.5"
+  },
   "devDependencies": {
     "babel-core": "^6.25.0",
     "babel-loader": "^7.0.0",
