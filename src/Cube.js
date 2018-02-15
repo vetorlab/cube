@@ -44,7 +44,7 @@ class Cube extends HTMLElement {
 
         this._addEventHandlers()
         this._refresh()
-        
+
         if (this.deviceOrientationManager !== undefined)
             this.deviceOrientationManager.init()
     }
@@ -108,7 +108,7 @@ class Cube extends HTMLElement {
 
 
     //#region Animation
-    
+
     animateTo(yaw, pitch, duration = 1000, callback = null) {
         // set yaw to the neares yaw
         const altYaw = yaw > 0
@@ -130,7 +130,7 @@ class Cube extends HTMLElement {
 
 
     //#region Freezing
-    
+
     freeze() {
         this._isFrozen = true
     }
@@ -138,13 +138,13 @@ class Cube extends HTMLElement {
     unfreeze() {
         this._isFrozen = false
     }
-    
+
     //#endregion
 
 
     //#region Zooming
 
-    zoomIn() {        
+    zoomIn() {
         this.zoomedIn = true
     }
     zoomOut() {
