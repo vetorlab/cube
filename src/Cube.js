@@ -1,6 +1,7 @@
-import DeviceOrientationManager from './DeviceOrientationManager'
-import {constraint, map} from './utils/math'
-
+import DeviceOrientation from './behavior/DeviceOrientation'
+import Animation from './behavior/Animation'
+import PointerInteraction from './behavior/PointerInteraction'
+import {constraint, map} from './utils/math' // @TODO replace for lodash functions
 
 const DEFAULT_FOV = '40vmax'
 const ZOOM_FOV = '60vmax'
@@ -32,7 +33,9 @@ class Cube extends HTMLElement {
         this._processAnimation  = this._processAnimation.bind(this)
         this._refresh           = this._refresh.bind(this)
 
-        this.deviceOrientationManager = new DeviceOrientationManager(this)
+        this.deviceOrientation = new DeviceOrientation(this)
+        this.animation = new Animation(this)
+        this.pointerInteraction = new PointerInteraction(this)
     }
 
     connectedCallback() {
@@ -45,8 +48,9 @@ class Cube extends HTMLElement {
         this._addEventHandlers()
         this._refresh()
 
-        if (this.deviceOrientationManager !== undefined)
-            this.deviceOrientationManager.init()
+        // @todo INIT all properties that are INITiable
+        if (this.deviceOrientation !== undefined)
+            this.deviceOrientation.init()
     }
 
     disconnectedCallback() {
@@ -56,8 +60,9 @@ class Cube extends HTMLElement {
 
         this._removeEventHandlers()
 
-        if (this.deviceOrientationManager !== undefined)
-            this.deviceOrientationManager.deinit()
+        // @todo DEINIT all properties that are DEINITiable
+        if (this.deviceOrientation !== undefined)
+            this.deviceOrientation.deinit()
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -196,7 +201,7 @@ class Cube extends HTMLElement {
         if (!this._isDragging || this._isAnimating || this._isFrozen) return
 
         this.yaw    += (this._lastDragEvent.pageX - e.pageX) * this._draggingMultiplier
-        this.pitch  -= constraint((this._lastDragEvent.pageY - e.pageY) * this._draggingMultiplier, -70, 70)
+        this.pitch  -= constraint((this._lastDragEvent.pageY - e.pageY) * this._draggingMultiplier, -70, 70) // @TODO replace for lodash functions
 
         this._lastDragEvent = e
     }
@@ -255,7 +260,7 @@ class Cube extends HTMLElement {
     }
 
     _normalize() {
-        this.pitch = constraint(this.pitch, -70, 70)
+        this.pitch = constraint(this.pitch, -70, 70) // @TODO replace for lodash functions
         if (this.yaw > 180) this.yaw -= 360
         if (this.yaw < -180) this.yaw += 360
         if (this.roll < -180) this.roll += 360

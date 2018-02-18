@@ -1,4 +1,4 @@
-class DeviceOrientationManager {
+export default class DeviceOrientation {
     constructor (cube) {
         this.cube = cube
         this.orientation = window.orientation || 0
@@ -31,7 +31,7 @@ class DeviceOrientationManager {
             this.cube.pitch  +=difY
             // this.cube.roll    += curr.z - prev.z
         }
-        
+
         this._previousOrientation =  curr
     }
 
@@ -64,5 +64,3 @@ class DeviceOrientationManager {
         return r;
     }
 }
-
-export default DeviceOrientationManager
