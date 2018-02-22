@@ -1,8 +1,8 @@
 import Cube from "../Cube";
 
-export default class Animation {
-    static DRAG_MULTIPLIER = 0.1
+const DRAG_MULTIPLIER = 0.1
 
+export default class Animation {
     constructor(cube) {
         if (!(cube instanceof Cube))
             throw `${typeof cube} should be a Cube object`
@@ -92,8 +92,8 @@ export default class Animation {
         // @todo implement the rest of the blockers
         // if (!this._isDragging || this._isAnimating || this._isFrozen) return
 
-        this.cube.yaw   += (this._lastEvent.pageX - e.pageX) * Animation.DRAG_MULTIPLIER
-        this.cube.pitch -= (this._lastEvent.pageY - e.pageY) * Animation.DRAG_MULTIPLIER
+        this.cube.yaw   += (this._lastEvent.pageX - e.pageX) * DRAG_MULTIPLIER
+        this.cube.pitch -= (this._lastEvent.pageY - e.pageY) * DRAG_MULTIPLIER
 
         this._lastEvent = e
     }

@@ -16,11 +16,8 @@ class Cube extends HTMLElement {
     constructor() {
         super()
 
-        this._isAnimating   = false
         this._isDragging    = false
         this._isFrozen      = false
-
-        this._draggingMultiplier = 0.1
 
         this.yaw    = 0
         this.pitch  = 0
@@ -31,14 +28,14 @@ class Cube extends HTMLElement {
 
         this.deviceOrientation = new DeviceOrientation(this)
         this.animation = new Animation(this)
-        this.pointerInteraction = new PointerInteraction(this)
+        // this.pointerInteraction = new PointerInteraction(this)
     }
 
     connectedCallback() {
         this._updatePerspective()
 
         this._pivot = this.querySelector('vz-cube-pivot')
-        if (!this._pivot)
+        if (!(this._pivot instanceof HTMLElement))
             throw "Pivot element (<vz-cube-pivot>) not found." // @todo add a link to the doc
 
         this._refresh()
@@ -49,11 +46,7 @@ class Cube extends HTMLElement {
     }
 
     disconnectedCallback() {
-        typeof cancelAnimationFrame === 'function'
-            ? cancelAnimationFrame(this._refreshId)
-            : clearTimeout(this._refreshId)
-
-        this._removeEventHandlers()
+        cancelAnimationFrame(this._refreshId)
 
         // @todo DEINIT all properties that are DEINITiable
         if (this.deviceOrientation !== undefined)
@@ -167,33 +160,6 @@ class Cube extends HTMLElement {
         return t<.5 ? 2*t*t : -1+(4-2*t)*t
     }
 
-    _handleMouseMove(e) {
-        if (!this._isDragging || this._isAnimating || this._isFrozen) return
-
-        this.yaw    += (this._lastDragEvent.pageX - e.pageX) * this._draggingMultiplier
-        this.pitch  -= (this._lastDragEvent.pageY - e.pageY) * this._draggingMultiplier
-
-        this._lastDragEvent = e
-    }
-
-    _handleTouchMove(e) {
-        if ( Math.abs(this.pitch) < 69 ){
-            e.preventDefault()
-        }
-
-        if (!this._isDragging || this._isAnimating || this._isFrozen) return
-
-        this.yaw    += (this._lastDragEvent.pageX - e.touches[0].pageX) * this._draggingMultiplier
-        this.pitch  -= (this._lastDragEvent.pageY - e.touches[0].pageY) * this._draggingMultiplier
-
-        this._lastDragEvent = e.touches[0]
-    }
-
-
-
-
-
-
 
     _processAnimation() {
         if (!this._isAnimating) return
@@ -231,12 +197,17 @@ class Cube extends HTMLElement {
 
         const perspective = getComputedStyle(this).perspective
 
-        this._pivot.style.transform = `translateZ(${perspective}) rotateZ(${this.roll}deg) rotateX(${this.pitch}deg) rotateY(${this.yaw}deg)`
+        if (!(this._pivot instanceof HTMLElement))
+            throw "Pivot element (<vz-cube-pivot>) not found." // @todo add a link to the doc
+        this._pivot.style.transform = `
+            translateZ(${perspective})
+            rotateZ(${this.roll}deg)
+            rotateX(${this.pitch}deg)
+            rotateY(${this.yaw}deg)
+        `
 
         // recurse
-        this._refreshId = typeof requestAnimationFrame === 'function'
-            ? requestAnimationFrame(this._refresh)
-            : setTimeout(this._refresh, 1000/30)
+        this._refreshId = requestAnimationFrame(this._refresh)
     }
 }
 
