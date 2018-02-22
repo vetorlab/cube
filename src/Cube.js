@@ -1,7 +1,9 @@
 import DeviceOrientation from './behavior/DeviceOrientation'
 import Animation from './behavior/Animation'
 import PointerInteraction from './behavior/PointerInteraction'
-import {constraint, map} from './utils/math' // @TODO replace for lodash functions
+import {map} from './utils/math' // @TODO replace for lodash functions
+// @ts-ignore
+import {clamp} from 'lodash/fp'
 
 const DEFAULT_FOV = '40vmax'
 const ZOOM_FOV = '60vmax'
@@ -201,7 +203,7 @@ class Cube extends HTMLElement {
         if (!this._isDragging || this._isAnimating || this._isFrozen) return
 
         this.yaw    += (this._lastDragEvent.pageX - e.pageX) * this._draggingMultiplier
-        this.pitch  -= constraint((this._lastDragEvent.pageY - e.pageY) * this._draggingMultiplier, -70, 70) // @TODO replace for lodash functions
+        this.pitch  -= (this._lastDragEvent.pageY - e.pageY) * this._draggingMultiplier // @TODO replace for lodash functions
 
         this._lastDragEvent = e
     }
@@ -260,7 +262,8 @@ class Cube extends HTMLElement {
     }
 
     _normalize() {
-        this.pitch = constraint(this.pitch, -70, 70) // @TODO replace for lodash functions
+        this.pitch = clamp(-70, 70, this.pitch)
+
         if (this.yaw > 180) this.yaw -= 360
         if (this.yaw < -180) this.yaw += 360
         if (this.roll < -180) this.roll += 360
