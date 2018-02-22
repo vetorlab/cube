@@ -26,12 +26,6 @@ class Cube extends HTMLElement {
         this.pitch  = 0
         this.roll  = 0
 
-        this._handleMouseDown   = this._handleMouseDown.bind(this)
-        this._handleMouseMove   = this._handleMouseMove.bind(this)
-        this._handleMouseUp     = this._handleMouseUp.bind(this)
-        this._handleTouchStart  = this._handleTouchStart.bind(this)
-        this._handleTouchMove   = this._handleTouchMove.bind(this)
-        this._handleTouchEnd    = this._handleTouchEnd.bind(this)
         this._processAnimation  = this._processAnimation.bind(this)
         this._refresh           = this._refresh.bind(this)
 
@@ -47,7 +41,6 @@ class Cube extends HTMLElement {
         if (!this._pivot)
             throw "Pivot element (<vz-cube-pivot>) not found." // @todo add a link to the doc
 
-        this._addEventHandlers()
         this._refresh()
 
         // @todo INIT all properties that are INITiable
@@ -174,56 +167,20 @@ class Cube extends HTMLElement {
         return t<.5 ? 2*t*t : -1+(4-2*t)*t
     }
 
-    _addEventHandlers() {
-        this.addEventListener('mousedown', this._handleMouseDown)
-        window.addEventListener('mousemove', this._handleMouseMove)
-        window.addEventListener('mouseup', this._handleMouseUp)
-        this.addEventListener('touchstart', this._handleTouchStart)
-        this.addEventListener('touchmove', this._handleTouchMove)
-        this.addEventListener('touchend', this._handleTouchEnd)
-        this.addEventListener('touchcancel', this._handleTouchEnd)
-    }
-
-    _removeEventHandlers() {
-        this.removeEventListener('mousedown', this._handleMouseDown)
-        window.removeEventListener('mousemove', this._handleMouseMove)
-        window.removeEventListener('mouseup', this._handleMouseUp)
-        this.removeEventListener('touchstart', this._handleTouchStart)
-        this.removeEventListener('touchmove', this._handleTouchMove)
-        this.removeEventListener('touchend', this._handleTouchEnd)
-        this.removeEventListener('touchcancel', this._handleTouchEnd)
-    }
-
-    _handleMouseDown(e) {
-        this._isDragging = true
-        this._lastDragEvent = e
-    }
-
     _handleMouseMove(e) {
         if (!this._isDragging || this._isAnimating || this._isFrozen) return
 
         this.yaw    += (this._lastDragEvent.pageX - e.pageX) * this._draggingMultiplier
-        this.pitch  -= (this._lastDragEvent.pageY - e.pageY) * this._draggingMultiplier // @TODO replace for lodash functions
+        this.pitch  -= (this._lastDragEvent.pageY - e.pageY) * this._draggingMultiplier
 
         this._lastDragEvent = e
-    }
-
-    _handleMouseUp(e) {
-        this._isDragging = false
-    }
-
-    _handleTouchStart(e) {
-        if ( Math.abs(this.pitch) < 69 ){
-            e.preventDefault()
-        }
-        this._isDragging = true
-        this._lastDragEvent = e.touches[0]
     }
 
     _handleTouchMove(e) {
         if ( Math.abs(this.pitch) < 69 ){
             e.preventDefault()
         }
+
         if (!this._isDragging || this._isAnimating || this._isFrozen) return
 
         this.yaw    += (this._lastDragEvent.pageX - e.touches[0].pageX) * this._draggingMultiplier
@@ -232,12 +189,11 @@ class Cube extends HTMLElement {
         this._lastDragEvent = e.touches[0]
     }
 
-    _handleTouchEnd(e) {
-        if ( Math.abs(this.pitch) < 69 ){
-            e.preventDefault()
-        }
-        this._isDragging = false
-    }
+
+
+
+
+
 
     _processAnimation() {
         if (!this._isAnimating) return
