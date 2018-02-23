@@ -106,19 +106,22 @@ class Cube extends HTMLElement {
     }
 
     animateTo(yaw, pitch, duration = 1000) {
-        // set yaw to the neares yaw
-        const altYaw = yaw > 0
-            ? yaw - 360
-            : yaw + 360
-        if (Math.abs(altYaw - this.yaw) < Math.abs(yaw - this.yaw)) {
-            yaw = altYaw
-        }
+        return new Promise(win => {
+            // set yaw to the neares yaw
+            const altYaw = yaw > 0
+                ? yaw - 360
+                : yaw + 360
+            if (Math.abs(altYaw - this.yaw) < Math.abs(yaw - this.yaw)) {
+                yaw = altYaw
+            }
 
-        this._isAnimating = true
-        this._animationStartPos     = { yaw: this.yaw, pitch: this.pitch }
-        this._animationEndPos       = { yaw: parseFloat(yaw) || 0, pitch: parseFloat(pitch) || 0 }
-        this._animationStartTime    = Date.now()
-        this._animationEndTime      = Date.now() + duration
+            this._isAnimating = true
+            this._animationStartPos     = { yaw: this.yaw, pitch: this.pitch }
+            this._animationEndPos       = { yaw: parseFloat(yaw) || 0, pitch: parseFloat(pitch) || 0 }
+            this._animationStartTime    = Date.now()
+            this._animationEndTime      = Date.now() + duration
+            this._animationEndCallback  = win
+        })
     }
 
     //#endregion
@@ -188,7 +191,7 @@ class Cube extends HTMLElement {
             // @TODO normalize
 
             if (typeof this._animationEndCallback === 'function') {
-                requestAnimationFrame(_ => this._animationEndCallback.call(this))
+                requestAnimationFrame(_ => this._animationEndCallback(this))
             }
         }
     }
