@@ -1,5 +1,5 @@
 import DeviceOrientation from './behavior/DeviceOrientation'
-import Animation from './behavior/Animation'
+import Manipulation from './behavior/Manipulation'
 import PointerInteraction from './behavior/PointerInteraction'
 import {map} from './utils/math' // @TODO replace for lodash functions
 // @ts-ignore
@@ -26,7 +26,7 @@ class Cube extends HTMLElement {
         this._refresh           = this._refresh.bind(this)
 
         this.deviceOrientation = new DeviceOrientation(this)
-        this.animation = new Animation(this)
+        this.manipulation = new Manipulation(this)
         // this.pointerInteraction = new PointerInteraction(this)
     }
 

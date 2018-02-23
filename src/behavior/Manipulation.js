@@ -2,7 +2,7 @@ import Cube from "../Cube";
 
 const DRAG_MULTIPLIER = 0.1
 
-export default class Animation {
+export default class Manipulation {
     constructor(cube) {
         if (!(cube instanceof Cube))
             throw `${typeof cube} should be a Cube object`
