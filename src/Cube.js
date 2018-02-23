@@ -125,10 +125,14 @@ class Cube extends HTMLElement {
 
     freeze() {
         this.frozen = true
+
+        return Promise.resolve(this)
     }
 
     unfreeze() {
         this.frozen = false
+
+        return Promise.resolve(this)
     }
 
     //#endregion
