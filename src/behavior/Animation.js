@@ -87,7 +87,7 @@ export default class Animation {
 
 
     _move(e) {
-        if (!this.isDragging) return
+        if (!this.isDragging || this.cube.frozen) return
 
         // @todo implement the rest of the blockers
         // if (!this._isDragging || this._isAnimating || this._isFrozen) return

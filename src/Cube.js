@@ -17,7 +17,6 @@ class Cube extends HTMLElement {
         super()
 
         this._isDragging    = false
-        this._isFrozen      = false
 
         this.yaw    = 0
         this.pitch  = 0
@@ -125,11 +124,11 @@ class Cube extends HTMLElement {
     //#region Freezing
 
     freeze() {
-        this._isFrozen = true
+        this.frozen = true
     }
 
     unfreeze() {
-        this._isFrozen = false
+        this.frozen = false
     }
 
     //#endregion
