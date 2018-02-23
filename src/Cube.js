@@ -101,7 +101,11 @@ class Cube extends HTMLElement {
 
     //#region Animation
 
-    animateTo(yaw, pitch, duration = 1000, callback = null) {
+    wait(duration = 0) {
+        return new Promise(win => setTimeout(_ => win(this), duration))
+    }
+
+    animateTo(yaw, pitch, duration = 1000) {
         // set yaw to the neares yaw
         const altYaw = yaw > 0
             ? yaw - 360
@@ -115,7 +119,6 @@ class Cube extends HTMLElement {
         this._animationEndPos       = { yaw: parseFloat(yaw) || 0, pitch: parseFloat(pitch) || 0 }
         this._animationStartTime    = Date.now()
         this._animationEndTime      = Date.now() + duration
-        this._animationEndCallback  = callback
     }
 
     //#endregion
@@ -142,9 +145,13 @@ class Cube extends HTMLElement {
 
     zoomIn() {
         this.zoomedIn = true
+
+        return Promise.resolve(this)
     }
     zoomOut() {
         this.zoomedIn = false
+
+        return Promise.resolve(this)
     }
     toggleZoom() {
         this.zoomedIn = !this.zoomedIn
@@ -212,6 +219,7 @@ class Cube extends HTMLElement {
         // recurse
         this._refreshId = requestAnimationFrame(this._refresh)
     }
+
 }
 
 export default Cube
