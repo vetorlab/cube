@@ -1,5 +1,5 @@
 {
-  "name": "vz-cube",
+  "name": "@vzlab/cube",
   "version": "5.0.0",
   "description": "",
   "main": "src/index.js",
