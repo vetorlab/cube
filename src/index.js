@@ -5,7 +5,6 @@
 
 
 export default class VZCube {
-
     /**
      * @param {HTMLElement} el 
      * @param {ImageSet} images 
@@ -63,6 +62,6 @@ const containerTemplate = `
  */
 function populateFaces(el, images) {
     el.innerHTML = Object.keys(images)
-        .map(side => `<div data-face="${side}" class="vz-cube__face" style="background-image: ${images[side]}" ></div>`)
+        .map(side => `<div data-face="${side}" class="vz-cube__face" style="background-image: url(${images[side]})" ></div>`)
         .join("\n");
 }
