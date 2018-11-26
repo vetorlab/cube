@@ -1,4 +1,7 @@
 {
+  "name": "vz-cube",
+  "version": "5.0.0",
+  "description": "",
   "main": "src/index.js",
   "scripts": {
     "serve": "webpack-dev-server --mode=development --open --host=0.0.0.0"
@@ -9,5 +12,15 @@
     "webpack": "^4.26.1",
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "^3.1.10"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vzlab/cube.git"
+  },
+  "author": "Felds Liscia <dev@felds.com.br>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vzlab/cube/issues"
+  },
+  "homepage": "https://github.com/vzlab/cube#readme"
 }
