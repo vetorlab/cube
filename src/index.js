@@ -1,7 +1,11 @@
+import st from "./styles.css";
+
+console.log(st)
+
+
 /**
  * @typedef {{top: string, bottom: string, left: string, right: string, front: string, back: string}} ImageSet
  */
-
 
 
 export default class VZCube {
