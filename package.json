@@ -1,7 +1,7 @@
 {
   "main": "src/index.js",
   "scripts": {
-    "serve": "webpack-dev-server --mode=development --open"
+    "serve": "webpack-dev-server --mode=development --open --host=0.0.0.0"
   },
   "devDependencies": {
     "css-loader": "^1.0.1",
