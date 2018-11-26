@@ -3,6 +3,7 @@
     overflow: hidden;
     perspective: 40vmax;
     transition: 500ms perspective ease-in-out;
+    background: black;
 }
 .vz-cube[zoom] {
     perspective: 60vmax;

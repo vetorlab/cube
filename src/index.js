@@ -1,6 +1,4 @@
-import st from "./styles.css";
-
-console.log(st)
+import "./styles.css";
 
 
 /**
@@ -21,6 +19,9 @@ export default class VZCube {
         el.innerHTML = containerTemplate;
 
         // store reference to pivot el
+        this._viewport = this.el.querySelector('.vz-cube');
+        if (!this._viewport) throw new Error(`Couldn't find viewport element.`);
+
         this._pivot = this.el.querySelector('.vz-cube__pivot');
         if (!this._pivot) throw new Error(`Couldn't find pivot element.`);
 
@@ -31,12 +32,11 @@ export default class VZCube {
         this.isAnimating = false;
         this.isDragging = false;
         this.isFrozen = false;
+        this.spedd = 0.1;
+        this.yaw = 0
+        this.pitch = 0
+        this.roll = 0
 
-        // this._draggingMultiplier = 0.1
-
-        // this.yaw = 0
-        // this.pitch = 0
-        // this.roll = 0
 
         // this._handleMouseDown = this._handleMouseDown.bind(this)
         // this._handleMouseMove = this._handleMouseMove.bind(this)
@@ -45,7 +45,29 @@ export default class VZCube {
         // this._handleTouchMove = this._handleTouchMove.bind(this)
         // this._handleTouchEnd = this._handleTouchEnd.bind(this)
         // this._processAnimation = this._processAnimation.bind(this)
-        // this._refresh = this._refresh.bind(this)
+        this._refresh = this._refresh.bind(this)
+
+        this._init();
+    }
+
+    _init() {
+        requestAnimationFrame(this._refresh);
+    }
+
+
+
+    _refresh(t) {
+        // this._processAnimation()
+        // this._normalize()
+
+        const perspective = getComputedStyle(this._viewport).perspective
+
+        this.yaw = Math.sin(t/2000) * 10;
+        this.roll = Math.sin(t/500) * 5;
+
+        this._pivot.style.transform = `translateZ(${perspective}) rotateZ(${this.roll}deg) rotateX(${this.pitch}deg) rotateY(${this.yaw}deg)`
+
+        requestAnimationFrame(this._refresh)
     }
 }
 
