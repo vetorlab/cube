@@ -33,6 +33,8 @@ export default class PointerEvents extends Plugin {
         this.cube.el.removeEventListener('touchcancel', this.handleTouchEnd)
     }
 
+
+    //#region mouse
     handleMouseDown(e) {
         e.preventDefault();
 
@@ -52,6 +54,8 @@ export default class PointerEvents extends Plugin {
     handleMouseUp(e) {
         this.cube.isDragging = false;
     }
+    //#endregion
+
 
     //#region touch
     handleTouchStart(e) {

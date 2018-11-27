@@ -127,9 +127,9 @@ const containerTemplate = `
 
 /**
  * Create the face elements and add them to the el.
- * 
+ *
  * @param {HTMLElement} el  The pivot element.
- * @param {ImageSet} images 
+ * @param {ImageSet} images
  */
 function populateFaces(el, images) {
     el.innerHTML = Object.keys(images)
