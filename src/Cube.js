@@ -1,18 +1,19 @@
+import PointerEvents from './plugins/PointerEvents';
 import { map, constraint } from './utils/math';
 
 /**
  * @typedef {{top: string, bottom: string, left: string, right: string, front: string, back: string}} ImageSet
  */
 
-
-export default class VZCube{
+export default class Cube{
     /**
-     * @param {HTMLElement} el 
-     * @param {ImageSet} images 
+     * @param {HTMLElement} el
+     * @param {ImageSet} images
      */
     constructor(el, images) {
         this.el = el;
         this.images = images;
+        this.plugins = [];
 
 
         // add the basic template to the element
@@ -46,22 +47,17 @@ export default class VZCube{
 
     /** @private */
     _init() {
-        this._handleMouseDown = this._handleMouseDown.bind(this)
-        this._handleMouseMove = this._handleMouseMove.bind(this)
-        this._handleMouseUp = this._handleMouseUp.bind(this)
-        this._handleTouchStart = this._handleTouchStart.bind(this)
-        this._handleTouchMove = this._handleTouchMove.bind(this)
-        this._handleTouchEnd = this._handleTouchEnd.bind(this)
-        this._processAnimation = this._processAnimation.bind(this)
-        this._refresh = this._refresh.bind(this)
+        // init plugins
+        this.plugins = Object.keys(this.constructor.plugins).reduce((acc, key) => {
+            const pluginClass = this.constructor.plugins[key];
+            const plugin = new pluginClass(this);
+            plugin.init();
 
-        this.el.addEventListener('mousedown', this._handleMouseDown)
-        window.addEventListener('mousemove', this._handleMouseMove)
-        window.addEventListener('mouseup', this._handleMouseUp)
-        this.el.addEventListener('touchstart', this._handleTouchStart)
-        this.el.addEventListener('touchmove', this._handleTouchMove)
-        this.el.addEventListener('touchend', this._handleTouchEnd)
-        this.el.addEventListener('touchcancel', this._handleTouchEnd)
+            return { ...acc, [key]: plugin };
+        }, {});
+
+        this._processAnimation = this._processAnimation.bind(this);
+        this._refresh = this._refresh.bind(this);
 
         requestAnimationFrame(this._refresh);
     }
@@ -69,63 +65,12 @@ export default class VZCube{
 
     /** @private */
     _deinit() {
-        this.el.removeEventListener('mousedown', this._handleMouseDown)
-        window.removeEventListener('mousemove', this._handleMouseMove)
-        window.removeEventListener('mouseup', this._handleMouseUp)
-        this.el.removeEventListener('touchstart', this._handleTouchStart)
-        this.el.removeEventListener('touchmove', this._handleTouchMove)
-        this.el.removeEventListener('touchend', this._handleTouchEnd)
-        this.el.removeEventListener('touchcancel', this._handleTouchEnd)
+        this.plugins.forEach(plugin => {
+            plugin.deinit();
+        })
+        this.plugins = [];
     }
 
-
-    _handleMouseDown(e) {
-        e.preventDefault();
-
-        this.isDragging = true
-        this._lastDragEvent = e
-    }
-
-    _handleMouseMove(e) {
-        if (!this.isDragging || this.isAnimating || this.isFrozen) return
-
-        this.yaw += (this._lastDragEvent.pageX - e.pageX) * this.speed
-        this.pitch -= constraint((this._lastDragEvent.pageY - e.pageY) * this.speed, -70, 70)
-
-        this._lastDragEvent = e
-    }
-
-    _handleMouseUp(e) {
-        this.isDragging = false
-    }
-
-    _handleTouchStart(e) {
-        if (Math.abs(this.pitch) < 69) {
-            e.preventDefault()
-        }
-
-        this.isDragging = true
-        this._lastDragEvent = e.touches[0]
-    }
-
-    _handleTouchMove(e) {
-        if (Math.abs(this.pitch) < 69) {
-            e.preventDefault()
-        }
-        if (!this.isDragging || this.isAnimating || this.isFrozen) return
-
-        this.yaw += (this._lastDragEvent.pageX - e.touches[0].pageX) * this.speed;
-        this.pitch -= (this._lastDragEvent.pageY - e.touches[0].pageY) * this.speed;
-
-        this._lastDragEvent = e.touches[0]
-    }
-
-    _handleTouchEnd(e) {
-        if (Math.abs(this.pitch) < 69) {
-            e.preventDefault()
-        }
-        this.isDragging = false
-    }
 
     _processAnimation() {
         if (!this.isAnimating) return
@@ -167,6 +112,9 @@ export default class VZCube{
 
         requestAnimationFrame(this._refresh)
     }
+}
+Cube.plugins = {
+    pointerEvents: PointerEvents,
 }
 
 const containerTemplate = `
