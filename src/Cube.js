@@ -80,6 +80,8 @@ export default class VZCube{
 
 
     _handleMouseDown(e) {
+        e.preventDefault();
+
         this.isDragging = true
         this._lastDragEvent = e
     }
