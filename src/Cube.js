@@ -17,7 +17,7 @@ export default class Cube{
 
 
         // add the basic template to the element
-        el.innerHTML = containerTemplate;
+        el.innerHTML = this.constructor.containerTemplate;
 
 
         // store references to key elements
@@ -41,12 +41,11 @@ export default class Cube{
         this.pitch = 0
         this.roll = 0
 
-        this._init();
+        this.init();
     }
 
 
-    /** @private */
-    _init() {
+    init() {
         // init plugins
         this.plugins = Object.keys(this.constructor.plugins).reduce((acc, key) => {
             const pluginClass = this.constructor.plugins[key];
@@ -56,15 +55,14 @@ export default class Cube{
             return { ...acc, [key]: plugin };
         }, {});
 
-        this._processAnimation = this._processAnimation.bind(this);
-        this._refresh = this._refresh.bind(this);
+        this.processAnimation = this.processAnimation.bind(this);
+        this.refresh = this.refresh.bind(this);
 
-        requestAnimationFrame(this._refresh);
+        requestAnimationFrame(this.refresh);
     }
 
-
-    /** @private */
-    _deinit() {
+    deinit() {
+        // deinit plugins
         this.plugins.forEach(plugin => {
             plugin.deinit();
         })
@@ -72,7 +70,7 @@ export default class Cube{
     }
 
 
-    _processAnimation() {
+    processAnimation() {
         if (!this.isAnimating) return
 
         const now = Date.now()
@@ -102,22 +100,21 @@ export default class Cube{
     }
 
     /** @private */
-    _refresh(t) {
-        this._processAnimation()
+    refresh(t) {
+        this.processAnimation()
         this._normalize()
 
         const perspective = getComputedStyle(this._viewport).perspective
 
         this._pivot.style.transform = `translateZ(${perspective}) rotateZ(${this.roll}deg) rotateX(${this.pitch}deg) rotateY(${this.yaw}deg)`
 
-        requestAnimationFrame(this._refresh)
+        requestAnimationFrame(this.refresh)
     }
 }
 Cube.plugins = {
     pointerEvents: PointerEvents,
 }
-
-const containerTemplate = `
+Cube.containerTemplate = `
     <div class="vz-cube">
         <div class="vz-cube__pivot">
         </div>
